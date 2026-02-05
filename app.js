@@ -1198,7 +1198,7 @@
     for (let i = 0; i < 7; i++) {
       const d = new Date(state.currentWeekStart);
       d.setDate(d.getDate() + i);
-      weekStartIds.push(DateUtils.formatDateKey(d));
+      weekStartIds.push(DateUtils.formatDate(d));
     }
 
     weekStartIds.forEach(dateKey => {
@@ -1379,7 +1379,8 @@
 
     // Actions
     DOM.exportBtn?.addEventListener('click', exportToCSV);
-    document.getElementById('export-pdf-btn')?.addEventListener('click', exportToPDF);
+    const exportPdfBtn = document.getElementById('export-pdf-btn');
+    exportPdfBtn?.addEventListener('click', exportToPDF);
     DOM.clearWeekBtn?.addEventListener('click', clearWeek);
     DOM.logoutBtn?.addEventListener('click', handleLogout);
 

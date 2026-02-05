@@ -16,6 +16,7 @@ const STATIC_ASSETS = [
     'app.js',
     'manifest.json',
     'logo.png',
+    'logo.svg',
     'favicon.ico',
     'icons/icon-192x192.png',
     'icons/icon-512x512.png'

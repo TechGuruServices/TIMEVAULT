@@ -4,7 +4,9 @@
     "description": "Premium work hours tracker PWA",
     "scripts": {
         "start": "serve .",
-        "dev": "serve ."
+        "dev": "serve .",
+        "build": "echo 'No build required for Vanilla JS PWA'",
+        "preview": "serve ."
     },
     "dependencies": {
         "serve": "^14.2.1"
