@@ -4,9 +4,9 @@
 * @version 2.0.0
 */
 
-const CACHE_NAME = 'timevault-v6';
-const STATIC_CACHE = 'timevault-static-v6';
-const DYNAMIC_CACHE = 'timevault-dynamic-v6';
+const CACHE_NAME = 'timevault-v7';
+const STATIC_CACHE = 'timevault-static-v7';
+const DYNAMIC_CACHE = 'timevault-dynamic-v7';
 
 // Assets to cache immediately on install
 const STATIC_ASSETS = [
