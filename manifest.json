@@ -17,6 +17,11 @@
     ],
     "icons": [
         {
+            "src": "icons/logo.svg",
+            "type": "image/svg+xml",
+            "sizes": "196x196"
+        },
+        {
             "src": "logo.png",
             "sizes": "any",
             "type": "image/png",
