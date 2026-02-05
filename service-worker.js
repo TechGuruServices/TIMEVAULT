@@ -1,12 +1,12 @@
- /**
- * TimeVault Service Worker
- * Provides offline support, caching, and background sync
- * @version 2.0.0
- */
+/**
+* TimeVault Service Worker
+* Provides offline support, caching, and background sync
+* @version 2.0.0
+*/
 
-const CACHE_NAME = 'timevault-v5';
-const STATIC_CACHE = 'timevault-static-v5';
-const DYNAMIC_CACHE = 'timevault-dynamic-v5';
+const CACHE_NAME = 'timevault-v6';
+const STATIC_CACHE = 'timevault-static-v6';
+const DYNAMIC_CACHE = 'timevault-dynamic-v6';
 
 // Assets to cache immediately on install
 const STATIC_ASSETS = [

@@ -1,0 +1,12 @@
+{
+    "name": "timevault-pwa",
+    "version": "2.0.0",
+    "description": "Premium work hours tracker PWA",
+    "scripts": {
+        "start": "serve .",
+        "dev": "serve ."
+    },
+    "dependencies": {
+        "serve": "^14.2.1"
+    }
+}
