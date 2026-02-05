@@ -5,8 +5,8 @@
     "start_url": "index.html",
     "scope": "./",
     "display": "standalone",
-    "background_color": "#0a0a0f",
-    "theme_color": "#d4af37",
+    "background_color": "#050507",
+    "theme_color": "#7e3af2",
     "orientation": "any",
     "lang": "en-US",
     "dir": "ltr",
@@ -16,12 +16,6 @@
         "business"
     ],
     "icons": [
-        {
-            "src": "logo.png",
-            "sizes": "1024x1024",
-            "type": "image/png",
-            "purpose": "any"
-        },
         {
             "src": "android-chrome-192x192.png",
             "sizes": "192x192",
@@ -33,6 +27,11 @@
             "sizes": "512x512",
             "type": "image/png",
             "purpose": "maskable any"
+        },
+        {
+            "src": "apple-touch-icon-180x180.png",
+            "sizes": "180x180",
+            "type": "image/png"
         }
     ],
     "shortcuts": [
@@ -40,13 +39,25 @@
             "name": "Add Today's Hours",
             "short_name": "Quick Add",
             "description": "Quickly add hours for today",
-            "url": "index.html?action=quick-add"
+            "url": "index.html?action=quick-add",
+            "icons": [
+                {
+                    "src": "favicon-96x96.png",
+                    "sizes": "96x96"
+                }
+            ]
         },
         {
             "name": "View Weekly Summary",
             "short_name": "Summary",
             "description": "View your weekly hours summary",
-            "url": "index.html?action=summary"
+            "url": "index.html?action=summary",
+            "icons": [
+                {
+                    "src": "favicon-96x96.png",
+                    "sizes": "96x96"
+                }
+            ]
         }
     ],
     "related_applications": [],
