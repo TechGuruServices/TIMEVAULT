@@ -598,6 +598,15 @@
   function goToToday() { state.currentWeekStart = DateUtils.getWeekStart(new Date()); initUI(); }
   function initUI() { renderWeekNavigation(); renderWeekGrid(); renderBarChart(); updateStats(); populateAdjustmentDays(); }
 
+  function updateUserDisplay() {
+    if (state.userEmail && DOM.userEmailDisplay) {
+      DOM.userEmailDisplay.textContent = state.userEmail;
+      DOM.userInfo?.classList.remove('hidden');
+    } else {
+      DOM.userInfo?.classList.add('hidden');
+    }
+  }
+
   async function handleSaveEmail() {
     const email = DOM.userEmailInput.value.trim();
     if (!email.includes('@')) return;
