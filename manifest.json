@@ -1,0 +1,64 @@
+{
+    "name": "TimeVault - Work Hours Tracker",
+    "short_name": "TimeVault",
+    "description": "Premium work hours tracker with overtime calculations, earnings reports, and cross-device sync. No signups required.",
+    "start_url": "index.html",
+    "scope": "./",
+    "display": "standalone",
+    "background_color": "#0a0a0f",
+    "theme_color": "#d4af37",
+    "orientation": "any",
+    "lang": "en-US",
+    "dir": "ltr",
+    "categories": [
+        "productivity",
+        "utilities",
+        "business"
+    ],
+    "icons": [
+        {
+            "src": "logo.png",
+            "sizes": "any",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "icons/icon-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "maskable"
+        }
+    ],
+    "shortcuts": [
+        {
+            "name": "Add Today's Hours",
+            "short_name": "Quick Add",
+            "description": "Quickly add hours for today",
+            "url": "index.html?action=quick-add"
+        },
+        {
+            "name": "View Weekly Summary",
+            "short_name": "Summary",
+            "description": "View your weekly hours summary",
+            "url": "index.html?action=summary"
+        }
+    ],
+    "related_applications": [],
+    "prefer_related_applications": false,
+    "display_override": [
+        "standalone",
+        "minimal-ui"
+    ]
+}
