@@ -278,6 +278,69 @@
 }
 
 /* ============================================
+   NEBULA THEME (Default/Dark)
+   ============================================ */
+[data-theme="nebula"], :root {
+    --primary: #9d50bb;
+    --secondary: #00d2ff;
+    --accent: #ff00cc;
+    --bg-primary: #0f0c29;
+    --text-primary: #ffffff;
+    --surface-glass: rgba(15, 12, 41, 0.85);
+    --glass-border: rgba(157, 80, 187, 0.3);
+}
+
+[data-theme="nebula"] .bg-animation {
+    background: 
+        radial-gradient(circle at 20% 30%, rgba(157, 80, 187, 0.3) 0%, transparent 40%),
+        radial-gradient(circle at 80% 70%, rgba(0, 210, 255, 0.3) 0%, transparent 40%);
+    animation: nebulaMovement 20s infinite alternate;
+}
+
+/* ============================================
+   GLASSMORPH THEME (Light Aesthetic)
+   ============================================ */
+[data-theme="glassmorph"] {
+    --primary: #6366f1;
+    --secondary: #3b82f6;
+    --accent: #f472b6;
+    --bg-primary: #f8fafc;
+    --text-primary: #1e293b;
+    --surface-glass: rgba(255, 255, 255, 0.7);
+    --glass-border: rgba(99, 102, 241, 0.2);
+}
+
+[data-theme="glassmorph"] body::before {
+    background: radial-gradient(circle at 50% 50%, rgba(99, 102, 241, 0.1), transparent 70%);
+}
+
+[data-theme="glassmorph"] .bg-animation {
+    background: linear-gradient(135deg, #fdfcfb 0%, #e2d1c3 100%);
+    opacity: 0.5;
+}
+
+/* ============================================
+   ABSTRACT THOUGHT THEME (High Contrast)
+   ============================================ */
+[data-theme="abstract"] {
+    --primary: #00f3ff;
+    --secondary: #7e3af2;
+    --accent: #ff2a6d;
+    --bg-primary: #050507;
+    --text-primary: #ffffff;
+    --surface-glass: rgba(5, 5, 7, 0.9);
+    --glass-border: var(--primary);
+}
+
+[data-theme="abstract"] .bg-animation {
+    background-image: repeating-linear-gradient(45deg, rgba(0, 243, 255, 0.05) 0px, transparent 2px, transparent 40px);
+    animation: abstractSlide 10s linear infinite;
+}
+
+@keyframes abstractSlide { from { background-position: 0 0; } to { background-position: 100px 100px; } }
+@keyframes nebulaMovement { 0% { transform: translate(0,0); } 100% { transform: translate(5%, 5%); } }
+
+/* ============================================
    THEME TOGGLE BUTTON
    ============================================ */
 .theme-toggle {
@@ -524,78 +587,6 @@ body::after {
     background: linear-gradient(0deg, rgba(5, 5, 7, 0.8) 0%, rgba(5, 5, 7, 0.4) 100%);
     -webkit-backdrop-filter: blur(5px);
     backdrop-filter: blur(5px);
-}
-
-/* ============================================
-   MOBILE FIXES & ADJUSTMENTS
-   ============================================ */
-/* FIX: Color picker not working on mobile */
-input[type="color"] {
-    -webkit-appearance: none;
-    -moz-appearance: none;
-    appearance: none;
-    width: 100%;
-    height: 48px;
-    background: rgba(255, 255, 255, 0.05);
-    border: 1px solid var(--border-default);
-    border-radius: var(--radius-lg);
-    cursor: pointer;
-    padding: 4px;
-    box-sizing: border-box;
-}
-
-/* On mobile, sometimes the swatch isn't rendered unless we target these */
-input[type="color"]::-webkit-color-swatch-wrapper {
-    padding: 0;
-    border-radius: var(--radius-md);
-}
-
-input[type="color"]::-webkit-color-swatch {
-    border: none;
-    border-radius: calc(var(--radius-md) - 2px);
-}
-
-input[type="color"]::-moz-color-swatch {
-    border: none;
-    border-radius: calc(var(--radius-md) - 2px);
-}
-
-/* Upload Styling */
-.file-upload-wrapper {
-    position: relative;
-    display: flex;
-    gap: var(--space-2);
-}
-
-.file-input {
-    position: absolute;
-    top: 0;
-    left: 0;
-    width: 100%;
-    height: 100%;
-    opacity: 0;
-    cursor: pointer;
-    z-index: 2;
-}
-
-.bg-preview-container {
-    margin-top: var(--space-4);
-    padding: var(--space-3);
-    background: rgba(255, 255, 255, 0.05);
-    border-radius: var(--radius-md);
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-}
-
-.preview-label {
-    font-size: var(--text-xs);
-    color: var(--text-secondary);
-}
-
-.btn-xs {
-    padding: 2px 8px;
-    font-size: 0.75rem;
 }
 
 .loader {

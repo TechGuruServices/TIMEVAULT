@@ -36,7 +36,6 @@
     LAST_SYNC: 'timeVault_lastSync',
     THEME: 'timeVault_theme',
     SYNC_BIN_ID: 'timeVault_syncBinId',
-    BG_IMAGE: 'timeVault_bgImage',
     SCHEMA_VER: 'timeVault_schemaVersion'
   };
 
@@ -48,9 +47,7 @@
     overtimeRate: 1.5,
     overtimeThreshold: 40,
     defaultBreak: 30,
-    weekStart: 1, // Monday
-    bgColor: '#050507',
-    bgImage: null
+    weekStart: 1 // Monday
   };
 
   // ============================================
@@ -95,12 +92,6 @@
     DOM.overtimeThresholdInput = document.getElementById('overtime-threshold');
     DOM.defaultBreakInput = document.getElementById('default-break');
     DOM.weekStartSelect = document.getElementById('week-start');
-    DOM.bgColorPicker = document.getElementById('bg-color-picker');
-    DOM.bgUpload = document.getElementById('bg-upload');
-    DOM.bgUploadTrigger = document.getElementById('bg-upload-trigger');
-    DOM.bgPreviewContainer = document.getElementById('bg-preview-container');
-    DOM.removeBgBtn = document.getElementById('remove-bg-btn');
-    DOM.bgUserImageLayer = document.getElementById('bg-user-image');
     DOM.closeEditBtn = document.getElementById('close-edit');
     DOM.saveEntryBtn = document.getElementById('save-entry');
     DOM.deleteEntryBtn = document.getElementById('delete-entry');
@@ -192,38 +183,27 @@
   // THEME MANAGER
   // ============================================
   const ThemeManager = {
+    themes: ['nebula', 'glassmorph', 'abstract'],
     init() {
-      const savedTheme = Storage.getString(STORAGE_KEYS.THEME);
-      if (savedTheme) {
-        state.theme = savedTheme;
-      } else if (window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches) {
-        state.theme = 'light';
-      } else {
-        state.theme = 'dark';
-      }
+      const saved = Storage.getString(STORAGE_KEYS.THEME);
+      state.theme = this.themes.includes(saved) ? saved : 'nebula';
       this.apply(state.theme);
-      window.matchMedia('(prefers-color-scheme: light)').addEventListener('change', (e) => {
-        if (!Storage.getString(STORAGE_KEYS.THEME)) {
-          const newTheme = e.matches ? 'light' : 'dark';
-          state.theme = newTheme;
-          this.apply(newTheme);
-        }
-      });
     },
     apply(theme) {
       document.documentElement.setAttribute('data-theme', theme);
       state.theme = theme;
-      const metaThemeColor = document.querySelector('meta[name="theme-color"]');
-      if (metaThemeColor) {
-        metaThemeColor.content = theme === 'light' ? '#f8fafc' : '#050507';
+      const meta = document.querySelector('meta[name="theme-color"]');
+      if (meta) {
+        const bg = getComputedStyle(document.documentElement).getPropertyValue('--bg-primary').trim();
+        meta.content = bg || '#0f0c29';
       }
     },
     toggle() {
-      const newTheme = state.theme === 'dark' ? 'light' : 'dark';
-      state.theme = newTheme;
+      const idx = (this.themes.indexOf(state.theme) + 1) % this.themes.length;
+      const newTheme = this.themes[idx];
       Storage.setString(STORAGE_KEYS.THEME, newTheme);
       this.apply(newTheme);
-      showToast(`Switched to ${newTheme} mode`, 'info');
+      showToast(`Theme: ${newTheme.toUpperCase()}`, 'info');
     }
   };
 
@@ -588,6 +568,7 @@
     });
     DOM.exportPdfBtn?.addEventListener('click', exportToPDF);
     DOM.logoutBtn?.addEventListener('click', handleLogout);
+    DOM.themeToggle?.addEventListener('click', () => ThemeManager.toggle());
     DOM.installBtn?.addEventListener('click', () => { if (deferredPrompt) { deferredPrompt.prompt(); deferredPrompt = null; DOM.installBanner.classList.remove('active'); } });
     window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); deferredPrompt = e; DOM.installBanner?.classList.add('active'); });
     window.addEventListener('online', () => { state.isOnline = true; updateSyncStatus('synced', 'Online'); });
