@@ -1,9 +1,11 @@
 {
 	"folders": [
 		{
+			"name": "timevault",
 			"path": "."
 		},
 		{
+			"name": "icons",
 			"path": "D:/apps/apps/timevault3.0v/icons"
 		}
 	],

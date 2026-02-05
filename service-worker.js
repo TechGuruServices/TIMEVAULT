@@ -4,9 +4,9 @@
 * @version 2.0.0
 */
 
-const CACHE_NAME = 'timevault-v8';
-const STATIC_CACHE = 'timevault-static-v8';
-const DYNAMIC_CACHE = 'timevault-dynamic-v8';
+const CACHE_NAME = 'timevault-v9';
+const STATIC_CACHE = 'timevault-static-v9';
+const DYNAMIC_CACHE = 'timevault-dynamic-v9';
 
 // Assets to cache immediately on install
 const STATIC_ASSETS = [
@@ -17,8 +17,13 @@ const STATIC_ASSETS = [
     'manifest.json',
     'logo.png',
     'favicon.ico',
-    'icons/icon-192x192.png',
-    'icons/icon-512x512.png'
+    'favicon-16x16.png',
+    'favicon-32x32.png',
+    'favicon-48x48.png',
+    'favicon-96x96.png',
+    'apple-touch-icon-180x180.png',
+    'android-chrome-192x192.png',
+    'android-chrome-512x512.png'
 ];
 
 // External assets (cache with network-first strategy)
