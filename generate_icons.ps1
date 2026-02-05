@@ -36,14 +36,8 @@ Write-Host "Generated icon-192x192.png"
 Resize-Image -image $img -size 512 -path "$iconsDir\icon-512x512.png"
 Write-Host "Generated icon-512x512.png"
 
-# Generate favicon (32x32 for simplicity, saved as .ico if possible, but .png often works. 
-# For true .ico in PS without external tools, it's tricky, so we'll save as PNG and rename/use as is for modern browsers, 
-# or use a simple resize to 64x64)
-# Better: Just save a small PNG as favicon.ico is okay for many dev servers, but for valid ICO we need a header.
-# We will save as favicon.png and update HTML to use that if we can't easily make a real ICO.
-# However, the user asked for favicon.ico. Let's try to just resize to 64x64 and save as favicon.ico (it's a PNG inside but works often) or just rely on the PNGs.
-# Actually, let's just make it a PNG and call it favicon.ico - browsers are lenient.
-Resize-Image -image $img -size 64 -path $destFavicon
-Write-Host "Generated favicon.ico (64x64)"
+# Generate favicon (32x32)
+Resize-Image -image $img -size 32 -path $destFavicon
+Write-Host "Generated favicon.ico (32x32)"
 
 $img.Dispose()

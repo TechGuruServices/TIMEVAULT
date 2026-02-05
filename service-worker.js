@@ -4,9 +4,9 @@
 * @version 2.0.0
 */
 
-const CACHE_NAME = 'timevault-v7';
-const STATIC_CACHE = 'timevault-static-v7';
-const DYNAMIC_CACHE = 'timevault-dynamic-v7';
+const CACHE_NAME = 'timevault-v8';
+const STATIC_CACHE = 'timevault-static-v8';
+const DYNAMIC_CACHE = 'timevault-dynamic-v8';
 
 // Assets to cache immediately on install
 const STATIC_ASSETS = [
@@ -16,7 +16,6 @@ const STATIC_ASSETS = [
     'app.js',
     'manifest.json',
     'logo.png',
-    'icons/logo.svg',
     'favicon.ico',
     'icons/icon-192x192.png',
     'icons/icon-512x512.png'

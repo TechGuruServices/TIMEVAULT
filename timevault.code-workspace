@@ -6,5 +6,8 @@
 		{
 			"path": "D:/apps/apps/timevault3.0v/icons"
 		}
-	]
+	],
+	"settings": {
+		"powershell.cwd": "timevault"
+	}
 }
