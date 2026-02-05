@@ -30,7 +30,8 @@
     USER_ID: 'timeVault_userId',
     LAST_SYNC: 'timeVault_lastSync',
     THEME: 'timeVault_theme',
-    SYNC_BIN_ID: 'timeVault_syncBinId'
+    SYNC_BIN_ID: 'timeVault_syncBinId',
+    BG_IMAGE: 'timeVault_bgImage'
   };
 
   // ============================================
@@ -42,7 +43,8 @@
     overtimeThreshold: 40,
     defaultBreak: 30,
     weekStart: 1, // Monday
-    bgColor: '#1e293b'
+    bgColor: '#1e293b',
+    bgImage: null
   };
 
   // ============================================
@@ -93,6 +95,11 @@
     DOM.defaultBreakInput = document.getElementById('default-break');
     DOM.weekStartSelect = document.getElementById('week-start');
     DOM.bgColorPicker = document.getElementById('bg-color-picker');
+    DOM.bgUpload = document.getElementById('bg-upload');
+    DOM.bgUploadTrigger = document.getElementById('bg-upload-trigger');
+    DOM.bgPreviewContainer = document.getElementById('bg-preview-container');
+    DOM.removeBgBtn = document.getElementById('remove-bg-btn');
+    DOM.bgUserImageLayer = document.getElementById('bg-user-image');
 
     // Edit Modal Elements
     DOM.closeEditBtn = document.getElementById('close-edit');
@@ -869,12 +876,53 @@
   }
 
   function applyBackgroundColor(color) {
-    if (!color) return;
-    document.documentElement.style.setProperty('--bg-primary', color);
+    const targetColor = color || state.settings.bgColor || DEFAULT_SETTINGS.bgColor;
+    document.documentElement.style.setProperty('--bg-primary', targetColor);
 
     // Apply the color to the body background directly
     // This overrides the default gradient with a solid color base
-    document.body.style.background = `linear-gradient(135deg, ${color} 0%, ${adjustColor(color, -20)} 50%, ${adjustColor(color, -40)} 100%)`;
+    document.body.style.background = `linear-gradient(135deg, ${targetColor} 0%, ${adjustColor(targetColor, -20)} 50%, ${adjustColor(targetColor, -40)} 100%)`;
+  }
+
+  function applyBackgroundImage(imageData) {
+    if (!DOM.bgUserImageLayer) return;
+
+    if (imageData) {
+      DOM.bgUserImageLayer.style.backgroundImage = `url(${imageData})`;
+      DOM.bgUserImageLayer.classList.add('active');
+      DOM.bgPreviewContainer?.classList.remove('hidden');
+    } else {
+      DOM.bgUserImageLayer.style.backgroundImage = '';
+      DOM.bgUserImageLayer.classList.remove('active');
+      DOM.bgPreviewContainer?.classList.add('hidden');
+    }
+  }
+
+  async function handleBgUpload(e) {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    if (file.size > 2 * 1024 * 1024) { // 2MB limit for localStorage
+      showToast('Image too large (max 2MB)', 'error');
+      return;
+    }
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      const imageData = event.target.result;
+      state.settings.bgImage = imageData;
+      applyBackgroundImage(imageData);
+      saveSettings();
+      showToast('Background updated!', 'success');
+    };
+    reader.readAsDataURL(file);
+  }
+
+  function handleRemoveBg() {
+    state.settings.bgImage = null;
+    applyBackgroundImage(null);
+    saveSettings();
+    showToast('Background removed', 'info');
   }
 
   // Helper function to adjust color brightness for gradient
@@ -1000,7 +1048,8 @@
       overtimeThreshold: parseInt(DOM.overtimeThresholdInput.value) || DEFAULT_SETTINGS.overtimeThreshold,
       defaultBreak: parseInt(DOM.defaultBreakInput.value) || DEFAULT_SETTINGS.defaultBreak,
       weekStart: parseInt(DOM.weekStartSelect.value),
-      bgColor: DOM.bgColorPicker.value || DEFAULT_SETTINGS.bgColor
+      bgColor: DOM.bgColorPicker.value || DEFAULT_SETTINGS.bgColor,
+      bgImage: state.settings.bgImage
     };
 
     applyBackgroundColor(state.settings.bgColor);
@@ -1353,6 +1402,11 @@
       applyBackgroundColor(e.target.value);
     });
 
+    // Background Image
+    DOM.bgUpload?.addEventListener('change', handleBgUpload);
+    DOM.bgUploadTrigger?.addEventListener('click', () => DOM.bgUpload.click());
+    DOM.removeBgBtn?.addEventListener('click', handleRemoveBg);
+
     // Edit Modal
     DOM.closeEditBtn?.addEventListener('click', () => Modal.close(DOM.editModal));
     DOM.saveEntryBtn?.addEventListener('click', saveEntry);
@@ -1457,6 +1511,9 @@
     updateCalculatedHours();
     if (state.settings.bgColor) {
       applyBackgroundColor(state.settings.bgColor);
+    }
+    if (state.settings.bgImage) {
+      applyBackgroundImage(state.settings.bgImage);
     }
 
     // Setup events

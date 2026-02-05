@@ -462,6 +462,143 @@ body::after {
     visibility: hidden;
 }
 
+/* ============================================
+   BACKGROUND LAYERS & ANIMATIONS
+   ============================================ */
+.bg-layers {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: -10;
+    overflow: hidden;
+    background: var(--bg-primary);
+}
+
+.bg-gradient {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at 10% 20%, rgba(126, 58, 242, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 90% 80%, rgba(0, 243, 255, 0.08) 0%, transparent 40%),
+                radial-gradient(circle at 50% 50%, rgba(255, 42, 109, 0.05) 0%, transparent 50%);
+    filter: blur(60px);
+}
+
+.bg-animation {
+    position: absolute;
+    inset: 0;
+    background: radial-gradient(circle at center, var(--primary) 0%, transparent 70%);
+    width: 150%;
+    height: 150%;
+    top: -25%;
+    left: -25%;
+    opacity: 0.1;
+    animation: bgMovement 20s linear infinite;
+    filter: blur(100px);
+}
+
+@keyframes bgMovement {
+    0% { transform: translate(0, 0) rotate(0deg); }
+    33% { transform: translate(5%, 5%) rotate(120deg); }
+    66% { transform: translate(-5%, 10%) rotate(240deg); }
+    100% { transform: translate(0, 0) rotate(360deg); }
+}
+
+.bg-user-image {
+    position: absolute;
+    inset: 0;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    opacity: 0;
+    transition: opacity var(--transition-slow);
+}
+
+.bg-user-image.active {
+    opacity: 0.4;
+}
+
+.bg-overlay {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(0deg, rgba(5, 5, 7, 0.8) 0%, rgba(5, 5, 7, 0.4) 100%);
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+}
+
+/* ============================================
+   MOBILE FIXES & ADJUSTMENTS
+   ============================================ */
+/* FIX: Color picker not working on mobile */
+input[type="color"] {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    width: 100%;
+    height: 48px;
+    background: rgba(255, 255, 255, 0.05);
+    border: 1px solid var(--border-default);
+    border-radius: var(--radius-lg);
+    cursor: pointer;
+    padding: 4px;
+    box-sizing: border-box;
+}
+
+/* On mobile, sometimes the swatch isn't rendered unless we target these */
+input[type="color"]::-webkit-color-swatch-wrapper {
+    padding: 0;
+    border-radius: var(--radius-md);
+}
+
+input[type="color"]::-webkit-color-swatch {
+    border: none;
+    border-radius: calc(var(--radius-md) - 2px);
+}
+
+input[type="color"]::-moz-color-swatch {
+    border: none;
+    border-radius: calc(var(--radius-md) - 2px);
+}
+
+/* Upload Styling */
+.file-upload-wrapper {
+    position: relative;
+    display: flex;
+    gap: var(--space-2);
+}
+
+.file-input {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    z-index: 2;
+}
+
+.bg-preview-container {
+    margin-top: var(--space-4);
+    padding: var(--space-3);
+    background: rgba(255, 255, 255, 0.05);
+    border-radius: var(--radius-md);
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+
+.preview-label {
+    font-size: var(--text-xs);
+    color: var(--text-secondary);
+}
+
+.btn-xs {
+    padding: 2px 8px;
+    font-size: 0.75rem;
+}
+
 .loader {
     width: 80px;
     height: 80px;

@@ -52,376 +52,399 @@
     <title>TimeVault • Work Hours Tracker</title>
 </head>
 
-<body>
-    <!-- Theme Toggle Button -->
-    <button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode" title="Toggle Theme">
-        <i class="fas fa-moon"></i>
-        <i class="fas fa-sun"></i>
-    </button>
+<!-- Background & Animations -->
+<div id="app-bg-layers" class="bg-layers">
+    <div class="bg-gradient"></div>
+    <div class="bg-animation"></div>
+    <div id="bg-user-image" class="bg-user-image"></div>
+    <div class="bg-overlay"></div>
+</div>
 
-    <!-- Loading Screen -->
-    <div class="loading">
-        <div class="loader"></div>
-        <div class="loading-text">LOADING SYSTEM...</div>
+<!-- Theme Toggle Button -->
+<button class="theme-toggle" id="theme-toggle" aria-label="Toggle light/dark mode" title="Toggle Theme">
+    <i class="fas fa-moon"></i>
+    <i class="fas fa-sun"></i>
+</button>
+
+<!-- Loading Screen -->
+<div class="loading">
+    <div class="loader"></div>
+    <div class="loading-text">LOADING SYSTEM...</div>
+</div>
+<!-- Toast Notifications Container -->
+<div id="toast-container" aria-live="polite"></div>
+
+<!-- PWA Install Banner -->
+<div id="install-banner" class="install-banner" role="banner">
+    <div class="install-content">
+        <i class="fas fa-download"></i>
+        <span>Install TimeVault for the best experience</span>
     </div>
-    <!-- Toast Notifications Container -->
-    <div id="toast-container" aria-live="polite"></div>
-
-    <!-- PWA Install Banner -->
-    <div id="install-banner" class="install-banner" role="banner">
-        <div class="install-content">
-            <i class="fas fa-download"></i>
-            <span>Install TimeVault for the best experience</span>
-        </div>
-        <div class="install-actions">
-            <button id="install-btn" class="btn btn-install">Install</button>
-            <button id="dismiss-install" class="btn btn-dismiss">&times;</button>
-        </div>
+    <div class="install-actions">
+        <button id="install-btn" class="btn btn-install">Install</button>
+        <button id="dismiss-install" class="btn btn-dismiss">&times;</button>
     </div>
+</div>
 
-    <!-- Email Setup Modal -->
-    <div id="email-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="email-modal-title">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 id="email-modal-title"><i class="fas fa-user-shield"></i> Welcome to TimeVault</h2>
-                <button class="modal-close" id="close-email-modal" aria-label="Close modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <p>Enter your email to sync data across all devices. <strong>No password required.</strong></p>
-                <div class="setting-group">
-                    <label for="user-email"><i class="fas fa-envelope"></i> Email Address</label>
-                    <input type="email" id="user-email" placeholder="you@domain.com" autocomplete="email" required>
-                    <small class="input-hint">Your email is only used for sync. We never send emails or share
-                        data.</small>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-secondary" id="skip-email">Skip for now</button>
-                <button class="btn btn-primary" id="save-email">Continue <i class="fas fa-arrow-right"></i></button>
+<!-- Email Setup Modal -->
+<div id="email-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="email-modal-title">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="email-modal-title"><i class="fas fa-user-shield"></i> Welcome to TimeVault</h2>
+            <button class="modal-close" id="close-email-modal" aria-label="Close modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <p>Enter your email to sync data across all devices. <strong>No password required.</strong></p>
+            <div class="setting-group">
+                <label for="user-email"><i class="fas fa-envelope"></i> Email Address</label>
+                <input type="email" id="user-email" placeholder="you@domain.com" autocomplete="email" required>
+                <small class="input-hint">Your email is only used for sync. We never send emails or share
+                    data.</small>
             </div>
         </div>
-    </div>
-
-    <!-- Settings Modal -->
-    <div id="settings-modal" class="modal-overlay" role="dialog" aria-modal="true"
-        aria-labelledby="settings-modal-title">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 id="settings-modal-title"><i class="fas fa-cog"></i> Settings</h2>
-                <button class="modal-close" id="close-settings" aria-label="Close modal">&times;</button>
-            </div>
-            <div class="modal-body">
-                <div class="setting-group">
-                    <label for="hourly-rate"><i class="fas fa-dollar-sign"></i> Hourly Rate ($)</label>
-                    <input type="number" id="hourly-rate" min="0" step="0.01" value="35">
-                </div>
-                <div class="setting-group">
-                    <label for="overtime-rate"><i class="fas fa-clock"></i> Overtime Rate Multiplier</label>
-                    <input type="number" id="overtime-rate" min="1" step="0.1" value="1.5">
-                </div>
-                <div class="setting-group">
-                    <label for="overtime-threshold"><i class="fas fa-calendar-week"></i> Weekly Overtime Threshold
-                        (hrs)</label>
-                    <input type="number" id="overtime-threshold" min="0" step="1" value="40">
-                </div>
-                <div class="setting-group">
-                    <label for="default-break"><i class="fas fa-coffee"></i> Default Break Duration (min)</label>
-                    <input type="number" id="default-break" min="0" step="1" value="30">
-                </div>
-                <div class="setting-group">
-                    <label for="week-start"><i class="fas fa-calendar-day"></i> Week Starts On</label>
-                    <select id="week-start">
-                        <option value="0">Sunday</option>
-                        <option value="1" selected>Monday</option>
-                    </select>
-                </div>
-                <div class="setting-group">
-                    <label for="bg-color-picker"><i class="fas fa-palette"></i> Background Color</label>
-                    <input type="color" id="bg-color-picker" value="#1e293b">
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger" id="reset-settings"><i class="fas fa-undo"></i> Reset</button>
-                <button class="btn btn-primary" id="save-settings"><i class="fas fa-save"></i> Save</button>
-            </div>
+        <div class="modal-footer">
+            <button class="btn btn-secondary" id="skip-email">Skip for now</button>
+            <button class="btn btn-primary" id="save-email">Continue <i class="fas fa-arrow-right"></i></button>
         </div>
     </div>
+</div>
 
-    <!-- Edit Entry Modal -->
-    <div id="edit-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
-        <div class="modal">
-            <div class="modal-header">
-                <h2 id="edit-modal-title"><i class="fas fa-edit"></i> Edit Entry</h2>
-                <button class="modal-close" id="close-edit" aria-label="Close modal">&times;</button>
+<!-- Settings Modal -->
+<div id="settings-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="settings-modal-title">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="settings-modal-title"><i class="fas fa-cog"></i> Settings</h2>
+            <button class="modal-close" id="close-settings" aria-label="Close modal">&times;</button>
+        </div>
+        <div class="modal-body">
+            <div class="setting-group">
+                <label for="hourly-rate"><i class="fas fa-dollar-sign"></i> Hourly Rate ($)</label>
+                <input type="number" id="hourly-rate" min="0" step="0.01" value="35">
             </div>
-            <div class="modal-body">
-                <div id="edit-date-label" class="modal-date-label">Monday, January 20, 2026</div>
-                <div class="time-inputs">
-                    <div class="input-group">
-                        <label for="edit-start">Start Time</label>
-                        <input type="time" id="edit-start">
-                    </div>
-                    <div class="input-group">
-                        <label for="edit-end">End Time</label>
-                        <input type="time" id="edit-end">
-                    </div>
-                    <div class="input-group">
-                        <label for="edit-break">Break (min)</label>
-                        <input type="number" id="edit-break" min="0" value="30">
-                    </div>
+            <div class="setting-group">
+                <label for="overtime-rate"><i class="fas fa-clock"></i> Overtime Rate Multiplier</label>
+                <input type="number" id="overtime-rate" min="1" step="0.1" value="1.5">
+            </div>
+            <div class="setting-group">
+                <label for="overtime-threshold"><i class="fas fa-calendar-week"></i> Weekly Overtime Threshold
+                    (hrs)</label>
+                <input type="number" id="overtime-threshold" min="0" step="1" value="40">
+            </div>
+            <div class="setting-group">
+                <label for="default-break"><i class="fas fa-coffee"></i> Default Break Duration (min)</label>
+                <input type="number" id="default-break" min="0" step="1" value="30">
+            </div>
+            <div class="setting-group">
+                <label for="week-start"><i class="fas fa-calendar-day"></i> Week Starts On</label>
+                <select id="week-start">
+                    <option value="0">Sunday</option>
+                    <option value="1" selected>Monday</option>
+                </select>
+            </div>
+            <div class="setting-group">
+                <label for="bg-color-picker"><i class="fas fa-palette"></i> Background Color</label>
+                <input type="color" id="bg-color-picker" value="#1e293b">
+            </div>
+            <div class="setting-group">
+                <label for="bg-upload"><i class="fas fa-image"></i> Custom Background Image</label>
+                <div class="file-upload-wrapper">
+                    <input type="file" id="bg-upload" accept="image/*" class="file-input">
+                    <button type="button" class="btn btn-secondary btn-sm" id="bg-upload-trigger">
+                        <i class="fas fa-upload"></i> Upload Image
+                    </button>
                 </div>
-                <div class="calculated-hours">
-                    <span class="calc-label">Total Hours:</span>
-                    <span class="calc-value" id="edit-calculated-hours">0.0</span>
+            </div>
+            <div id="bg-preview-container" class="bg-preview-container hidden">
+                <span class="preview-label">Active Background Image:</span>
+                <div class="preview-actions">
+                    <button type="button" class="btn btn-danger btn-xs" id="remove-bg-btn">
+                        <i class="fas fa-times"></i> Remove
+                    </button>
                 </div>
             </div>
-            <div class="modal-footer">
-                <button class="btn btn-danger" id="delete-entry"><i class="fas fa-trash"></i> Delete</button>
-                <button class="btn btn-primary" id="save-entry"><i class="fas fa-check"></i> Save</button>
-            </div>
+        </div>
+        <div class="modal-footer">
+            <button class="btn btn-danger" id="reset-settings"><i class="fas fa-undo"></i> Reset</button>
+            <button class="btn btn-primary" id="save-settings"><i class="fas fa-save"></i> Save</button>
         </div>
     </div>
+</div>
 
-    <!-- Main App Container -->
-    <div class="app-container">
-        <header class="app-header">
-            <div class="logo">
-                <div class="logo-image">
-                    <img src="logo.png" alt="TimeVault" class="logo-png">
-                </div>
-            </div>
-
-            <p class="tagline">Your Personal Work Hours Tracker</p>
-
-            <div class="sync-status" id="sync-status" role="status" aria-live="polite">
-                <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>
-                <span id="sync-text">Initializing...</span>
-            </div>
-
-            <div class="user-info hidden" id="user-info">
-                <i class="fas fa-user" aria-hidden="true"></i>
-                <span id="user-email-display">user@example.com</span>
-                <button class="btn-icon" id="logout-btn" title="Clear sync data"><i
-                        class="fas fa-sign-out-alt"></i></button>
-            </div>
-        </header>
-
-        <!-- Stats Dashboard -->
-        <div class="stats-dashboard">
-            <div class="stat-card accent-green">
-                <div class="stat-icon"><i class="fas fa-clock" aria-hidden="true"></i></div>
-                <div class="stat-info">
-                    <span class="stat-label">Weekly Hours</span>
-                    <span class="stat-value" id="weekly-hours">0.0</span>
-                    <span class="stat-unit">hrs</span>
-                </div>
-            </div>
-            <div class="stat-card accent-orange">
-                <div class="stat-icon"><i class="fas fa-business-time" aria-hidden="true"></i></div>
-                <div class="stat-info">
-                    <span class="stat-label">Overtime</span>
-                    <span class="stat-value" id="overtime-hours">0.0</span>
-                    <span class="stat-unit">hrs</span>
-                </div>
-            </div>
-            <div class="stat-card accent-purple">
-                <div class="stat-icon"><i class="fas fa-coins" aria-hidden="true"></i></div>
-                <div class="stat-info">
-                    <span class="stat-label">Earnings</span>
-                    <span class="stat-value" id="weekly-earnings">$0</span>
-                    <span class="stat-unit">this week</span>
-                </div>
-            </div>
-            <div class="stat-card accent-blue">
-                <div class="stat-icon"><i class="fas fa-calendar-check" aria-hidden="true"></i></div>
-                <div class="stat-info">
-                    <span class="stat-label">Days Worked</span>
-                    <span class="stat-value" id="days-worked">0</span>
-                    <span class="stat-unit">this week</span>
-                </div>
-            </div>
+<!-- Edit Entry Modal -->
+<div id="edit-modal" class="modal-overlay" role="dialog" aria-modal="true" aria-labelledby="edit-modal-title">
+    <div class="modal">
+        <div class="modal-header">
+            <h2 id="edit-modal-title"><i class="fas fa-edit"></i> Edit Entry</h2>
+            <button class="modal-close" id="close-edit" aria-label="Close modal">&times;</button>
         </div>
-
-        <!-- Week Navigation -->
-        <div class="week-nav">
-            <button class="nav-btn" id="prev-week" aria-label="Previous week">
-                <i class="fas fa-chevron-left" aria-hidden="true"></i>
-            </button>
-            <div class="week-display">
-                <span class="week-label" id="week-label">This Week</span>
-                <div class="week-dates" id="week-dates">Jan 20 - Jan 26, 2026</div>
-            </div>
-            <button class="nav-btn today-btn" id="today-btn" aria-label="Go to today">
-                <i class="fas fa-calendar-day" aria-hidden="true"></i>
-                <span class="btn-text">Today</span>
-            </button>
-            <button class="nav-btn" id="next-week" aria-label="Next week">
-                <i class="fas fa-chevron-right" aria-hidden="true"></i>
-            </button>
-        </div>
-
-        <!-- Week Grid -->
-        <div class="week-grid" id="week-grid">
-            <!-- Day cards injected by JS -->
-        </div>
-
-        <!-- Quick Add Section -->
-        <section class="quick-add" aria-labelledby="quick-add-title">
-            <h3 id="quick-add-title"><i class="fas fa-bolt" aria-hidden="true"></i> Quick Add Today's Hours</h3>
-            <form class="quick-add-form" id="quick-add-form">
-                <div class="time-inputs">
-                    <div class="input-group">
-                        <label for="quick-start">Start Time</label>
-                        <input type="time" id="quick-start" value="09:00">
-                    </div>
-                    <div class="input-group">
-                        <label for="quick-end">End Time</label>
-                        <input type="time" id="quick-end" value="17:30">
-                    </div>
-                    <div class="input-group">
-                        <label for="quick-break">Break (min)</label>
-                        <input type="number" id="quick-break" min="0" value="30">
-                    </div>
-                </div>
-                <div class="calculated-hours">
-                    <span class="calc-label">Net Hours:</span>
-                    <span class="calc-value" id="calculated-hours">8.0</span>
-                </div>
-                <button type="submit" class="btn btn-primary btn-large" id="add-today">
-                    <i class="fas fa-plus-circle" aria-hidden="true"></i> Add to Today
-                </button>
-            </form>
-        </section>
-
-        <!-- Quick Adjustment Section -->
-        <section class="adjustment-section" aria-labelledby="adjustment-title">
-            <h3 id="adjustment-title"><i class="fas fa-sliders-h" aria-hidden="true"></i> Quick Adjustment</h3>
-            <div class="adjustment-form">
+        <div class="modal-body">
+            <div id="edit-date-label" class="modal-date-label">Monday, January 20, 2026</div>
+            <div class="time-inputs">
                 <div class="input-group">
-                    <label for="adjust-day">Select Day</label>
-                    <select id="adjust-day"></select>
+                    <label for="edit-start">Start Time</label>
+                    <input type="time" id="edit-start">
                 </div>
-                <div class="adjustment-controls">
-                    <button type="button" class="adj-btn minus" id="adj-minus" aria-label="Subtract hours">
-                        <i class="fas fa-minus" aria-hidden="true"></i>
-                    </button>
-                    <input type="number" id="adj-hours" value="0.5" min="0.1" step="0.1" aria-label="Hours to adjust">
-                    <button type="button" class="adj-btn plus" id="adj-plus" aria-label="Add hours">
-                        <i class="fas fa-plus" aria-hidden="true"></i>
-                    </button>
+                <div class="input-group">
+                    <label for="edit-end">End Time</label>
+                    <input type="time" id="edit-end">
                 </div>
-                <span class="adj-label">hours</span>
-            </div>
-        </section>
-
-        <!-- Weekly Chart Section -->
-        <section class="weekly-chart" aria-labelledby="chart-title">
-            <h3 id="chart-title"><i class="fas fa-chart-bar" aria-hidden="true"></i> Weekly Breakdown</h3>
-            <div class="bar-chart" id="bar-chart" role="img" aria-label="Weekly hours bar chart">
-                <!-- Bars injected by JS -->
-            </div>
-            <div class="chart-legend">
-                <div class="legend-item">
-                    <div class="dot regular"></div>
-                    <span>Regular</span>
-                </div>
-                <div class="legend-item">
-                    <div class="dot overtime"></div>
-                    <span>Overtime</span>
+                <div class="input-group">
+                    <label for="edit-break">Break (min)</label>
+                    <input type="number" id="edit-break" min="0" value="30">
                 </div>
             </div>
-        </section>
-
-        <!-- Action Buttons -->
-        <div class="actions">
-            <button class="btn btn-secondary" id="settings-btn">
-                <i class="fas fa-cog" aria-hidden="true"></i> Settings
-            </button>
-            <button class="btn btn-secondary" id="export-btn">
-                <i class="fas fa-file-csv" aria-hidden="true"></i> Export CSV
-            </button>
-            <button class="btn btn-secondary" id="export-pdf-btn">
-                <i class="fas fa-file-pdf" aria-hidden="true"></i> Export PDF
-            </button>
-            <button class="btn btn-danger" id="clear-week-btn">
-                <i class="fas fa-trash-alt" aria-hidden="true"></i> Clear Week
-            </button>
-        </div>
-
-        <!-- Printable Report Section (Hidden on Screen) -->
-        <div id="print-report" class="print-only">
-            <div class="print-header">
-                <h1>TimeVault Report</h1>
-                <p id="print-week-range">Week Range</p>
-            </div>
-            <table class="print-table">
-                <thead>
-                    <tr>
-                        <th>Date</th>
-                        <th>Day</th>
-                        <th>Start</th>
-                        <th>End</th>
-                        <th>Break</th>
-                        <th>Hours</th>
-                        <th>Rate/Hr</th>
-                        <th>Daily Pay</th>
-                    </tr>
-                </thead>
-                <tbody id="print-table-body">
-                    <!-- Injected by JS -->
-                </tbody>
-                <tfoot id="print-table-footer">
-                    <!-- Injected by JS -->
-                </tfoot>
-            </table>
-            <div class="print-footer">
-                <p>Generated by TimeVault</p>
+            <div class="calculated-hours">
+                <span class="calc-label">Total Hours:</span>
+                <span class="calc-value" id="edit-calculated-hours">0.0</span>
             </div>
         </div>
-
-        <!-- Footer -->
-        <footer class="app-footer">
-            <p>Data saved locally & synced securely to your devices</p>
-            <p class="credit">Designed by L|T — Powered by <span class="techguru">TECHGURU</span></p>
-        </footer>
+        <div class="modal-footer">
+            <button class="btn btn-danger" id="delete-entry"><i class="fas fa-trash"></i> Delete</button>
+            <button class="btn btn-primary" id="save-entry"><i class="fas fa-check"></i> Save</button>
+        </div>
     </div>
-    <!-- End app-container -->
+</div>
 
-    <!-- Main App Script -->
-    <script src="app.js"></script>
+<!-- Main App Container -->
+<div class="app-container">
+    <header class="app-header">
+        <div class="logo">
+            <div class="logo-image">
+                <img src="logo.png" alt="TimeVault" class="logo-png">
+            </div>
+        </div>
 
-    <!-- Service Worker Registration -->
-    <script>
-        // Register Service Worker
-        // Register Service Worker
-        if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
-            window.addEventListener('load', async () => {
-                try {
-                    const registration = await navigator.serviceWorker.register('service-worker.js');
-                    console.log('✅ Service Worker registered:', registration.scope);
+        <p class="tagline">Your Personal Work Hours Tracker</p>
 
-                    // Check for updates
-                    registration.addEventListener('updatefound', () => {
-                        const newWorker = registration.installing;
-                        console.log('🔄 Service Worker update found');
+        <div class="sync-status" id="sync-status" role="status" aria-live="polite">
+            <i class="fas fa-circle-notch fa-spin" aria-hidden="true"></i>
+            <span id="sync-text">Initializing...</span>
+        </div>
 
-                        newWorker.addEventListener('statechange', () => {
-                            if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                                // New version available
-                                if (window.showToast) {
-                                    window.showToast('New version available. Refresh to update!', 'info');
-                                }
+        <div class="user-info hidden" id="user-info">
+            <i class="fas fa-user" aria-hidden="true"></i>
+            <span id="user-email-display">user@example.com</span>
+            <button class="btn-icon" id="logout-btn" title="Clear sync data"><i
+                    class="fas fa-sign-out-alt"></i></button>
+        </div>
+    </header>
+
+    <!-- Stats Dashboard -->
+    <div class="stats-dashboard">
+        <div class="stat-card accent-green">
+            <div class="stat-icon"><i class="fas fa-clock" aria-hidden="true"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Weekly Hours</span>
+                <span class="stat-value" id="weekly-hours">0.0</span>
+                <span class="stat-unit">hrs</span>
+            </div>
+        </div>
+        <div class="stat-card accent-orange">
+            <div class="stat-icon"><i class="fas fa-business-time" aria-hidden="true"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Overtime</span>
+                <span class="stat-value" id="overtime-hours">0.0</span>
+                <span class="stat-unit">hrs</span>
+            </div>
+        </div>
+        <div class="stat-card accent-purple">
+            <div class="stat-icon"><i class="fas fa-coins" aria-hidden="true"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Earnings</span>
+                <span class="stat-value" id="weekly-earnings">$0</span>
+                <span class="stat-unit">this week</span>
+            </div>
+        </div>
+        <div class="stat-card accent-blue">
+            <div class="stat-icon"><i class="fas fa-calendar-check" aria-hidden="true"></i></div>
+            <div class="stat-info">
+                <span class="stat-label">Days Worked</span>
+                <span class="stat-value" id="days-worked">0</span>
+                <span class="stat-unit">this week</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Week Navigation -->
+    <div class="week-nav">
+        <button class="nav-btn" id="prev-week" aria-label="Previous week">
+            <i class="fas fa-chevron-left" aria-hidden="true"></i>
+        </button>
+        <div class="week-display">
+            <span class="week-label" id="week-label">This Week</span>
+            <div class="week-dates" id="week-dates">Jan 20 - Jan 26, 2026</div>
+        </div>
+        <button class="nav-btn today-btn" id="today-btn" aria-label="Go to today">
+            <i class="fas fa-calendar-day" aria-hidden="true"></i>
+            <span class="btn-text">Today</span>
+        </button>
+        <button class="nav-btn" id="next-week" aria-label="Next week">
+            <i class="fas fa-chevron-right" aria-hidden="true"></i>
+        </button>
+    </div>
+
+    <!-- Week Grid -->
+    <div class="week-grid" id="week-grid">
+        <!-- Day cards injected by JS -->
+    </div>
+
+    <!-- Quick Add Section -->
+    <section class="quick-add" aria-labelledby="quick-add-title">
+        <h3 id="quick-add-title"><i class="fas fa-bolt" aria-hidden="true"></i> Quick Add Today's Hours</h3>
+        <form class="quick-add-form" id="quick-add-form">
+            <div class="time-inputs">
+                <div class="input-group">
+                    <label for="quick-start">Start Time</label>
+                    <input type="time" id="quick-start" value="09:00">
+                </div>
+                <div class="input-group">
+                    <label for="quick-end">End Time</label>
+                    <input type="time" id="quick-end" value="17:30">
+                </div>
+                <div class="input-group">
+                    <label for="quick-break">Break (min)</label>
+                    <input type="number" id="quick-break" min="0" value="30">
+                </div>
+            </div>
+            <div class="calculated-hours">
+                <span class="calc-label">Net Hours:</span>
+                <span class="calc-value" id="calculated-hours">8.0</span>
+            </div>
+            <button type="submit" class="btn btn-primary btn-large" id="add-today">
+                <i class="fas fa-plus-circle" aria-hidden="true"></i> Add to Today
+            </button>
+        </form>
+    </section>
+
+    <!-- Quick Adjustment Section -->
+    <section class="adjustment-section" aria-labelledby="adjustment-title">
+        <h3 id="adjustment-title"><i class="fas fa-sliders-h" aria-hidden="true"></i> Quick Adjustment</h3>
+        <div class="adjustment-form">
+            <div class="input-group">
+                <label for="adjust-day">Select Day</label>
+                <select id="adjust-day"></select>
+            </div>
+            <div class="adjustment-controls">
+                <button type="button" class="adj-btn minus" id="adj-minus" aria-label="Subtract hours">
+                    <i class="fas fa-minus" aria-hidden="true"></i>
+                </button>
+                <input type="number" id="adj-hours" value="0.5" min="0.1" step="0.1" aria-label="Hours to adjust">
+                <button type="button" class="adj-btn plus" id="adj-plus" aria-label="Add hours">
+                    <i class="fas fa-plus" aria-hidden="true"></i>
+                </button>
+            </div>
+            <span class="adj-label">hours</span>
+        </div>
+    </section>
+
+    <!-- Weekly Chart Section -->
+    <section class="weekly-chart" aria-labelledby="chart-title">
+        <h3 id="chart-title"><i class="fas fa-chart-bar" aria-hidden="true"></i> Weekly Breakdown</h3>
+        <div class="bar-chart" id="bar-chart" role="img" aria-label="Weekly hours bar chart">
+            <!-- Bars injected by JS -->
+        </div>
+        <div class="chart-legend">
+            <div class="legend-item">
+                <div class="dot regular"></div>
+                <span>Regular</span>
+            </div>
+            <div class="legend-item">
+                <div class="dot overtime"></div>
+                <span>Overtime</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- Action Buttons -->
+    <div class="actions">
+        <button class="btn btn-secondary" id="settings-btn">
+            <i class="fas fa-cog" aria-hidden="true"></i> Settings
+        </button>
+        <button class="btn btn-secondary" id="export-btn">
+            <i class="fas fa-file-csv" aria-hidden="true"></i> Export CSV
+        </button>
+        <button class="btn btn-secondary" id="export-pdf-btn">
+            <i class="fas fa-file-pdf" aria-hidden="true"></i> Export PDF
+        </button>
+        <button class="btn btn-danger" id="clear-week-btn">
+            <i class="fas fa-trash-alt" aria-hidden="true"></i> Clear Week
+        </button>
+    </div>
+
+    <!-- Printable Report Section (Hidden on Screen) -->
+    <div id="print-report" class="print-only">
+        <div class="print-header">
+            <h1>TimeVault Report</h1>
+            <p id="print-week-range">Week Range</p>
+        </div>
+        <table class="print-table">
+            <thead>
+                <tr>
+                    <th>Date</th>
+                    <th>Day</th>
+                    <th>Start</th>
+                    <th>End</th>
+                    <th>Break</th>
+                    <th>Hours</th>
+                    <th>Rate/Hr</th>
+                    <th>Daily Pay</th>
+                </tr>
+            </thead>
+            <tbody id="print-table-body">
+                <!-- Injected by JS -->
+            </tbody>
+            <tfoot id="print-table-footer">
+                <!-- Injected by JS -->
+            </tfoot>
+        </table>
+        <div class="print-footer">
+            <p>Generated by TimeVault</p>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <footer class="app-footer">
+        <p>Data saved locally & synced securely to your devices</p>
+        <p class="credit">Designed by L|T — Powered by <span class="techguru">TECHGURU</span></p>
+    </footer>
+</div>
+<!-- End app-container -->
+
+<!-- Main App Script -->
+<script src="app.js"></script>
+
+<!-- Service Worker Registration -->
+<script>
+    // Register Service Worker
+    // Register Service Worker
+    if ('serviceWorker' in navigator && window.location.protocol !== 'file:') {
+        window.addEventListener('load', async () => {
+            try {
+                const registration = await navigator.serviceWorker.register('service-worker.js');
+                console.log('✅ Service Worker registered:', registration.scope);
+
+                // Check for updates
+                registration.addEventListener('updatefound', () => {
+                    const newWorker = registration.installing;
+                    console.log('🔄 Service Worker update found');
+
+                    newWorker.addEventListener('statechange', () => {
+                        if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
+                            // New version available
+                            if (window.showToast) {
+                                window.showToast('New version available. Refresh to update!', 'info');
                             }
-                        });
+                        }
                     });
-                } catch (error) {
-                    console.warn('⚠️ Service Worker registration failed:', error);
-                }
-            });
-        } else if (window.location.protocol === 'file:') {
-            console.log('info: Service Worker disabled on file protocol');
-        }
-    </script>
+                });
+            } catch (error) {
+                console.warn('⚠️ Service Worker registration failed:', error);
+            }
+        });
+    } else if (window.location.protocol === 'file:') {
+        console.log('info: Service Worker disabled on file protocol');
+    }
+</script>
 </body>
 
 </html>
