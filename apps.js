@@ -1383,26 +1383,90 @@ If asked about calculations, be precise. If you don't know something, say so.`;
 
 	importData(file) {
 		const reader = new FileReader();
-		reader.onload = (e) => {
-			try {
-				const data = JSON.parse(e.target.result);
+		const extension = file.name.split('.').pop().toLowerCase();
 
-				if (data.settings) this.settings = { ...this.settings, ...data.settings };
-				if (data.timeEntries) this.timeEntries = data.timeEntries;
-				if (data.aiMemory) this.aiMemory = { ...this.aiMemory, ...data.aiMemory };
-
-				this.saveToStorage();
-				this.updateSettingsUI();
-				this.updateDashboard();
-				this.updateChart();
-
-				this.showToast('Import Complete', `Imported ${data.timeEntries?.length || 0} time entries.`, 'success');
-				this.addAIMessage('ai', `📥 Data imported! ${data.timeEntries?.length || 0} entries restored.`);
-			} catch (err) {
-				this.showToast('Import Failed', 'Invalid backup file format.', 'error');
+		if (extension === 'json') {
+			reader.onload = (e) => {
+				try {
+					const data = JSON.parse(e.target.result);
+					this.processImportedData(data);
+				} catch (err) {
+					this.showToast('Import Failed', 'Invalid JSON backup file format.', 'error');
+				}
+			};
+			reader.readAsText(file);
+		} else if (extension === 'csv') {
+			if (typeof Papa !== 'undefined') {
+				Papa.parse(file, {
+					header: true,
+					skipEmptyLines: true,
+					complete: (results) => {
+						try {
+							const importedEntries = results.data.map(row => {
+								return {
+									id: Date.now() + Math.floor(Math.random() * 1000),
+									startTime: new Date(row.Date + ' ' + row['Clock In']).getTime(),
+									endTime: new Date(row.Date + ' ' + row['Clock Out']).getTime(),
+									duration: parseFloat(row['Duration (Hours)'] || row.Duration) || 0,
+									earnings: parseFloat(String(row.Earnings || '0').replace(/[^0-9.-]+/g, "")) || 0
+								};
+							}).filter(e => !isNaN(e.startTime) && !isNaN(e.endTime) && e.duration > 0);
+							this.processImportedData({ timeEntries: importedEntries });
+						} catch (err) {
+							this.showToast('Import Failed', 'Invalid CSV format.', 'error');
+						}
+					},
+					error: (err) => {
+						this.showToast('Import Failed', 'Failed to parse CSV file.', 'error');
+					}
+				});
+			} else {
+				this.showToast('Import Failed', 'CSV parser library not loaded.', 'error');
 			}
-		};
-		reader.readAsText(file);
+		} else if (extension === 'pdf') {
+			this.showToast('Info', 'PDF import is currently limited. Processing...', 'info');
+			if (typeof window['pdfjs-dist/build/pdf'] !== 'undefined' || typeof pdfjsLib !== 'undefined') {
+				const pdfLib = window['pdfjs-dist/build/pdf'] || pdfjsLib;
+				pdfLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+				reader.onload = async (e) => {
+					try {
+						const typedarray = new Uint8Array(e.target.result);
+						const pdf = await pdfLib.getDocument(typedarray).promise;
+						let text = '';
+						for (let i = 1; i <= pdf.numPages; i++) {
+							const page = await pdf.getPage(i);
+							const content = await page.getTextContent();
+							text += content.items.map(item => item.str).join(' ') + '\n';
+						}
+						this.showToast('PDF Read', 'PDF text extracted successfully but full parsing requires manual review.', 'warning');
+						console.log('PDF Text:', text);
+					} catch (err) {
+						this.showToast('Import Failed', 'Failed to read PDF.', 'error');
+					}
+				};
+				reader.readAsArrayBuffer(file);
+			} else {
+				this.showToast('Error', 'PDF library not loaded for import.', 'error');
+			}
+		} else {
+			this.showToast('Import Failed', 'Unsupported file type. Use .json, .csv, or .pdf.', 'error');
+		}
+	},
+
+	processImportedData(data) {
+		if (data.settings) this.settings = { ...this.settings, ...data.settings };
+		if (data.timeEntries) {
+			this.timeEntries = [...this.timeEntries, ...data.timeEntries];
+		}
+		if (data.aiMemory) this.aiMemory = { ...this.aiMemory, ...data.aiMemory };
+
+		this.saveToStorage();
+		this.updateSettingsUI();
+		this.updateDashboard();
+		this.updateChart();
+
+		this.showToast('Import Complete', `Imported ${data.timeEntries?.length || 0} time entries.`, 'success');
+		this.addAIMessage('ai', `📥 Data imported! ${data.timeEntries?.length || 0} entries restored.`);
 	},
 
 	// ============================================

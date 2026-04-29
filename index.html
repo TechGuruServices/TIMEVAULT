@@ -41,6 +41,8 @@
   <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
   <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
 </head>
 
 <body>
@@ -982,7 +984,7 @@
   </div>
 
   <!-- Import File Input (Hidden) -->
-  <input type="file" id="import-file" accept=".json" class="visually-hidden" aria-label="Import backup file">
+  <input type="file" id="import-file" accept=".json,.csv,.pdf" class="visually-hidden" aria-label="Import backup file">
 
   <!-- Service Worker Registration -->
   <script>
