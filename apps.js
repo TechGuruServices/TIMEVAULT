@@ -2301,10 +2301,74 @@ If asked about calculations, be precise. If you don't know something, say so.`;
 	},
 
 	exportPayrollPDF() {
-		this.showToast('Coming Soon', 'PDF Export feature is under development', 'info');
+		const element = document.getElementById('view-payroll');
+		if (!element) return;
+
+		// Temporarily hide the export button during PDF generation
+		const exportBtn = document.getElementById('export-payroll-btn');
+		if (exportBtn) exportBtn.style.display = 'none';
+
+		this.showToast('Exporting', 'Generating PDF report...', 'info', 2000);
+
+		const opt = {
+			margin:       0.5,
+			filename:     `timevault_payroll_${new Date().toISOString().split('T')[0]}.pdf`,
+			image:        { type: 'jpeg', quality: 0.98 },
+			html2canvas:  { scale: 2, useCORS: true, logging: false },
+			jsPDF:        { unit: 'in', format: 'letter', orientation: 'portrait' }
+		};
+
+		// Make sure html2pdf is available
+		if (typeof html2pdf !== 'undefined') {
+			html2pdf().set(opt).from(element).save().then(() => {
+				if (exportBtn) exportBtn.style.display = '';
+				this.showToast('Success', 'PDF report downloaded successfully', 'success');
+			}).catch(err => {
+				console.error('PDF Export Error:', err);
+				if (exportBtn) exportBtn.style.display = '';
+				this.showToast('Error', 'Failed to generate PDF', 'error');
+			});
+		} else {
+			if (exportBtn) exportBtn.style.display = '';
+			this.showToast('Error', 'PDF library not loaded', 'error');
+		}
 	},
 
 	exportReportCSV() {
-		this.showToast('Coming Soon', 'CSV Export feature is under development', 'info');
+		if (!this.timeEntries || this.timeEntries.length === 0) {
+			this.showToast('No Data', 'No time entries to export', 'warning');
+			return;
+		}
+
+		const headers = ['Date', 'Clock In', 'Clock Out', 'Duration (Hours)', 'Earnings'];
+		const rows = [headers.join(',')];
+
+		// Sort entries by date descending
+		const sortedEntries = [...this.timeEntries].sort((a, b) => b.startTime - a.startTime);
+
+		sortedEntries.forEach(entry => {
+			const date = new Date(entry.startTime).toLocaleDateString();
+			const clockIn = new Date(entry.startTime).toLocaleTimeString();
+			const clockOut = entry.endTime ? new Date(entry.endTime).toLocaleTimeString() : 'In Progress';
+			const duration = entry.duration.toFixed(2);
+			const earnings = entry.earnings.toFixed(2);
+
+			rows.push(`"${date}","${clockIn}","${clockOut}","${duration}","${earnings}"`);
+		});
+
+		const csvContent = rows.join('\n');
+		const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+		const url = URL.createObjectURL(blob);
+		
+		const link = document.createElement('a');
+		link.setAttribute('href', url);
+		link.setAttribute('download', `timevault_report_${new Date().toISOString().split('T')[0]}.csv`);
+		link.style.visibility = 'hidden';
+		document.body.appendChild(link);
+		link.click();
+		document.body.removeChild(link);
+		URL.revokeObjectURL(url);
+
+		this.showToast('Success', 'CSV report downloaded successfully', 'success');
 	}
 };

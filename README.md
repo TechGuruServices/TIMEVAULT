@@ -72,7 +72,7 @@
 
 ## 📁 Project Structure
 
-```
+```text
 tune_time/
 ├── index.html          # Main application shell (all views)
 ├── apps.js             # Application logic (~2100 lines)
