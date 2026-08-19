@@ -1,1124 +1,921 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <meta name="description" content="TIMEVAULT ― Your AI-Powered Time Keeper + Payroll Calculator">
-  <meta name="apple-mobile-web-app-capable" content="yes">
-  <meta name="mobile-web-app-capable" content="yes">
-  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-  <meta name="apple-mobile-web-app-title" content="TimeVault">
-  <title>TimeVault - Premium Time Tracking & Payroll</title>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>TimeVault — Work Hours Tracker</title>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@latest/500.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@latest/700.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope@latest/400.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope@latest/600.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope@latest/700.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/manrope@latest/800.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@latest/400.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@latest/500.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@latest/600.css" rel="stylesheet">
+<link href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@latest/700.css" rel="stylesheet">
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+html,body{overflow-x:hidden}
+body{
+  font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  background:#06070D;color:#F2F1FA;min-height:100vh;-webkit-font-smoothing:antialiased;
+}
+::selection{background:rgba(139,92,246,.45);color:#fff}
+::-webkit-scrollbar{width:5px;height:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:linear-gradient(#8B5CF6,#22D3EE);border-radius:99px}
 
-  <!-- Favicon 96x96 Primary -->
-  <link rel="icon" type="image/png" sizes="96x96" href="icons/time-icons_favicon_96x96.png">
-  <link rel="icon" type="image/x-icon" href="icons/time-icons_favicon.ico">
-  <link rel="icon" type="image/png" sizes="16x16" href="icons/time-icons_favicon_16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="icons/time-icons_favicon_32x32.png">
-  <link rel="icon" type="image/png" sizes="48x48" href="icons/time-icons_favicon_48x48.png">
-  <link rel="icon" type="image/png" sizes="64x64" href="icons/time-icons_favicon_64x64.png">
+:root{
+  --panel:rgba(17,19,32,.62);
+  --panel-2:rgba(26,29,48,.62);
+  --line:rgba(255,255,255,.08);
+  --line-2:rgba(255,255,255,.16);
+  --txt:#F2F1FA;--mut:#A0A3BC;--dim:#686C86;
+  --vio:#8B5CF6;--vio-h:#A78BFA;--vio-d:#6D28D9;
+  --cyn:#22D3EE;--cyn-h:#67E8F9;
+  --pnk:#F472B6;--fuc:#D946EF;
+  --amb:#FBBF24;--org:#FB923C;
+  --emr:#34D399;--emr-h:#6EE7B7;--emr-d:#059669;
+  --rose:#FB7185;
+  --blu:#60A5FA;
+  --r-lg:16px;--r-md:11px;--r-sm:8px;
+}
+.disp{font-family:'Space Grotesk',sans-serif}
+.mono{font-family:'IBM Plex Mono','SF Mono',Consolas,monospace;font-variant-numeric:tabular-nums}
+input,select,textarea{font-family:'Manrope',sans-serif}
 
-  <!-- Apple Touch Icons -->
-  <link rel="apple-touch-icon" sizes="57x57" href="icons/time-icons_apple_57x57.png">
-  <link rel="apple-touch-icon" sizes="60x60" href="icons/time-icons_apple_60x60.png">
-  <link rel="apple-touch-icon" sizes="68x68" href="icons/time-icons_apple_68x68.png">
-  <link rel="apple-touch-icon" sizes="72x72" href="icons/time-icons_apple_72x72.png">
-  <link rel="apple-touch-icon" sizes="76x76" href="icons/time-icons_apple_76x76.png">
-  <link rel="apple-touch-icon" sizes="114x114" href="icons/time-icons_apple_114x114.png">
-  <link rel="apple-touch-icon" sizes="120x120" href="icons/time-icons_apple_120x120.png">
-  <link rel="apple-touch-icon" sizes="144x144" href="icons/time-icons_apple_144x144.png">
-  <link rel="apple-touch-icon" sizes="152x152" href="icons/time-icons_apple_152x152.png">
-  <link rel="apple-touch-icon" sizes="167x167" href="icons/time-icons_apple_167x167.png">
-  <link rel="apple-touch-icon" sizes="180x180" href="icons/time-icons_apple_180x180.png">
+/* animated top strip */
+body::before{content:'';position:fixed;top:0;left:0;right:0;height:2px;z-index:60;
+  background:linear-gradient(90deg,#8B5CF6,#22D3EE,#F472B6,#FBBF24,#8B5CF6);
+  background-size:250% 100%;animation:stripflow 8s linear infinite;}
+@keyframes stripflow{to{background-position:250% 0}}
 
-  <!-- Android Chrome Icons & Manifest -->
-  <link rel="icon" type="image/png" sizes="192x192" href="icons/time-icons_android_192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="icons/time-icons_android_512x512.png">
-  <link rel="manifest" href="manifest.json">
-  <link rel="browserconfig" href="browserconfig.xml">
-  <link rel="stylesheet" href="styles.css">
-  <script src="https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/PapaParse/5.4.1/papaparse.min.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+/* aurora */
+.aur{position:fixed;border-radius:50%;filter:blur(100px);pointer-events:none;z-index:0;will-change:transform}
+.aur-1{width:640px;height:640px;top:-220px;left:-160px;background:radial-gradient(circle,rgba(124,58,237,.42),transparent 62%);animation:drift1 26s ease-in-out infinite alternate}
+.aur-2{width:540px;height:540px;top:18%;right:-220px;background:radial-gradient(circle,rgba(34,211,238,.3),transparent 62%);animation:drift2 31s ease-in-out infinite alternate}
+.aur-3{width:580px;height:580px;bottom:-260px;left:24%;background:radial-gradient(circle,rgba(236,72,153,.26),transparent 62%);animation:drift3 29s ease-in-out infinite alternate}
+.aur-4{width:400px;height:400px;top:44%;left:-160px;background:radial-gradient(circle,rgba(251,191,36,.16),transparent 60%);animation:drift4 34s ease-in-out infinite alternate}
+@keyframes drift1{to{transform:translate(150px,95px) scale(1.18)}}
+@keyframes drift2{to{transform:translate(-170px,-70px) scale(1.12)}}
+@keyframes drift3{to{transform:translate(-130px,-110px) scale(1.2)}}
+@keyframes drift4{to{transform:translate(190px,-70px) scale(1.1)}}
+.grid-tex{position:fixed;inset:0;z-index:0;pointer-events:none;
+  background-image:linear-gradient(rgba(139,92,246,.04) 1px,transparent 1px),linear-gradient(90deg,rgba(139,92,246,.04) 1px,transparent 1px);
+  background-size:52px 52px;
+  -webkit-mask-image:radial-gradient(ellipse 90% 70% at 50% 18%,#000 25%,transparent 100%);
+  mask-image:radial-gradient(ellipse 90% 70% at 50% 18%,#000 25%,transparent 100%);}
+
+/* animated gradient text */
+.grad-txt{background:linear-gradient(120deg,#A78BFA,#22D3EE 32%,#F472B6 64%,#FBBF24 84%,#A78BFA);
+  background-size:240% auto;-webkit-background-clip:text;background-clip:text;
+  -webkit-text-fill-color:transparent;color:transparent;animation:gradflow 8s linear infinite;}
+@keyframes gradflow{to{background-position:240% center}}
+
+.app{max-width:1020px;margin:0 auto;padding:0 20px 40px;position:relative;z-index:1}
+
+/* motion */
+@keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
+@keyframes fade{from{opacity:0}to{opacity:1}}
+@keyframes spin{to{transform:rotate(360deg)}}
+@keyframes tin{from{opacity:0;transform:translateX(120%)}}
+@keyframes pop{from{opacity:0;transform:translateY(18px) scale(.96)}}
+@keyframes riseIn{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:translateY(0)}}
+@keyframes gaugeIn{from{stroke-dashoffset:106.82}}
+@keyframes growY{from{transform:scaleY(0)}}
+@keyframes fillw{from{width:0}}
+@keyframes shine{to{transform:translateX(120%)}}
+@keyframes pulse{50%{opacity:.4;transform:scale(.78)}}
+@keyframes spinHue{to{--spin:360deg}}
+.a1{animation:riseIn .6s 0s both cubic-bezier(.16,1,.3,1)}
+.a2{animation:riseIn .6s .08s both cubic-bezier(.16,1,.3,1)}
+.a3{animation:riseIn .6s .16s both cubic-bezier(.16,1,.3,1)}
+.a4{animation:riseIn .6s .24s both cubic-bezier(.16,1,.3,1)}
+.rise{animation:riseIn .55s both cubic-bezier(.16,1,.3,1)}
+
+/* cards */
+.card{position:relative;background:linear-gradient(160deg,var(--panel),var(--panel-2));
+  border:1px solid var(--line);border-radius:var(--r-lg);
+  backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);
+  transition:transform .35s cubic-bezier(.16,1,.3,1),box-shadow .35s,border-color .35s;}
+.card::before{content:'';position:absolute;inset:0;border-radius:inherit;padding:1px;pointer-events:none;
+  background:linear-gradient(135deg,rgba(139,92,246,.6),rgba(34,211,238,.45) 50%,rgba(244,114,182,.6));
+  -webkit-mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);-webkit-mask-composite:xor;
+  mask:linear-gradient(#000 0 0) content-box,linear-gradient(#000 0 0);mask-composite:exclude;
+  opacity:0;transition:opacity .35s;}
+.card:hover{transform:translateY(-3px);border-color:transparent;
+  box-shadow:0 24px 60px -18px rgba(0,0,0,.65),0 10px 34px -12px rgba(139,92,246,.4);}
+.card:hover::before{opacity:1}
+
+/* rotating conic border for today */
+@property --spin{syntax:'<angle>';initial-value:0deg;inherits:false}
+.today-wrap{border-radius:calc(var(--r-lg) + 2px);padding:1.5px;position:relative;
+  background:conic-gradient(from var(--spin),#8B5CF6,#22D3EE,#F472B6,#FBBF24,#8B5CF6);
+  animation:spinHue 6s linear infinite;
+  box-shadow:0 14px 44px -14px rgba(139,92,246,.45);}
+.today-wrap .card{border-color:transparent;background:linear-gradient(160deg,rgba(20,22,38,.92),rgba(13,15,26,.94))}
+.today-wrap .card::before{display:none}
+.today-wrap .card:hover{transform:none}
+
+/* buttons */
+.btn{padding:10px 18px;border-radius:var(--r-md);font-weight:700;font-size:13px;cursor:pointer;border:none;
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;transition:all .28s cubic-bezier(.16,1,.3,1);
+  font-family:'Manrope',sans-serif;letter-spacing:.15px;position:relative;}
+.btn-p{color:#fff;background:linear-gradient(120deg,#7C3AED,#D946EF 42%,#06B6D4 88%,#7C3AED);
+  background-size:280% auto;
+  box-shadow:0 6px 22px -6px rgba(139,92,246,.6),inset 0 1px 0 rgba(255,255,255,.28);
+  text-shadow:0 1px 2px rgba(0,0,0,.25);}
+.btn-p:hover{background-position:95% center;transform:translateY(-1px);
+  box-shadow:0 12px 32px -6px rgba(217,70,239,.65),inset 0 1px 0 rgba(255,255,255,.3);}
+.btn-p:active{transform:translateY(0)}
+.btn-s{background:rgba(255,255,255,.04);color:var(--txt);border:1px solid var(--line)}
+.btn-s:hover{border-color:rgba(139,92,246,.55);background:rgba(139,92,246,.1);transform:translateY(-1px);
+  box-shadow:0 8px 22px -8px rgba(139,92,246,.45);}
+.btn-d{background:rgba(251,113,133,.1);color:#FDA4AF;border:1px solid rgba(251,113,133,.32)}
+.btn-d:hover{background:rgba(251,113,133,.2);transform:translateY(-1px);box-shadow:0 8px 22px -8px rgba(251,113,133,.45)}
+.btn-g{background:rgba(52,211,153,.1);color:var(--emr-h);border:1px solid rgba(52,211,153,.32)}
+.btn-g:hover{background:rgba(52,211,153,.2);transform:translateY(-1px);box-shadow:0 8px 22px -8px rgba(52,211,153,.45)}
+button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-visible{outline:2px solid var(--vio-h);outline-offset:2px}
+
+/* inputs */
+.inp{width:100%;padding:11px 13px;border-radius:var(--r-md);border:1px solid var(--line);
+  background:rgba(255,255,255,.04);color:var(--txt);font-size:13px;outline:none;transition:all .25s;color-scheme:dark;}
+.inp[type=number],.inp[type=time],.inp[type=text]{font-family:'IBM Plex Mono',monospace}
+.inp:focus{border-color:var(--vio);background:rgba(139,92,246,.07);
+  box-shadow:0 0 0 3px rgba(139,92,246,.2),0 0 22px -4px rgba(139,92,246,.4);}
+.inp::placeholder{color:var(--dim)}
+.lbl,.eyebrow{display:block;font-size:10px;color:var(--mut);font-weight:700;letter-spacing:.9px;text-transform:uppercase}
+.lbl{margin-bottom:6px}
+
+/* ledger rows */
+.entry-row{display:flex;justify-content:space-between;align-items:center;padding:9px 6px;
+  border-bottom:1px solid rgba(255,255,255,.05);cursor:pointer;border-radius:9px;transition:all .18s;}
+.entry-row:last-child{border-bottom:none}
+.entry-row:hover{background:linear-gradient(90deg,rgba(139,92,246,.12),rgba(34,211,238,.06));padding-left:11px;padding-right:11px}
+.day-add{width:100%;background:rgba(139,92,246,.05);border:1px dashed rgba(139,92,246,.38);border-radius:10px;
+  padding:9px;color:var(--dim);cursor:pointer;display:flex;align-items:center;justify-content:center;gap:6px;
+  font-size:12px;font-weight:700;transition:all .25s;font-family:'Manrope',sans-serif;}
+.day-add:hover{background:rgba(139,92,246,.13);border-color:var(--vio-h);color:var(--vio-h);
+  box-shadow:0 0 20px -6px rgba(139,92,246,.55);}
+
+/* progress */
+.prog{height:3px;background:rgba(255,255,255,.06);border-radius:99px;overflow:hidden;margin-bottom:11px}
+.prog .fill{height:100%;border-radius:99px;position:relative;overflow:hidden;
+  background:linear-gradient(90deg,#34D399,#22D3EE);animation:fillw .9s cubic-bezier(.16,1,.3,1) both;}
+.prog .fill.ot{background:linear-gradient(90deg,#FB923C,#FB7185)}
+.prog .fill::after{content:'';position:absolute;inset:0;width:60%;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.55),transparent);
+  transform:translateX(-120%);animation:shine 2.6s ease-in-out infinite;}
+
+/* modal */
+.mo-overlay{position:fixed;inset:0;background:rgba(4,5,10,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
+  display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px;animation:fade .25s both;}
+.mo-box{width:100%;max-width:480px;max-height:88vh;overflow-y:auto;position:relative;
+  background:linear-gradient(165deg,rgba(27,30,50,.94),rgba(13,15,27,.96));
+  border:1px solid rgba(255,255,255,.11);border-radius:20px;
+  box-shadow:0 40px 100px rgba(0,0,0,.65),0 0 60px -20px rgba(139,92,246,.35);
+  animation:pop .42s cubic-bezier(.16,1,.3,1) both;}
+.mo-box::before{content:'';position:absolute;top:0;left:26px;right:26px;height:2px;
+  background:linear-gradient(90deg,transparent,#8B5CF6,#22D3EE,transparent);opacity:.9}
+
+/* toast */
+.toast-box{position:fixed;bottom:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:8px;max-width:330px}
+.toast{position:relative;overflow:hidden;background:rgba(18,20,34,.92);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.1);border-radius:13px;padding:12px 16px 12px 19px;
+  display:flex;align-items:center;gap:10px;box-shadow:0 16px 44px rgba(0,0,0,.55),0 0 30px -12px rgba(139,92,246,.3);
+  animation:tin .4s cubic-bezier(.16,1,.3,1) both;}
+.toast::before{content:'';position:absolute;left:0;top:0;bottom:0;width:3px;background:var(--tstrip,linear-gradient(#8B5CF6,#22D3EE))}
+
+/* nav */
+.nav-btn{width:36px;height:36px;border-radius:10px;background:rgba(255,255,255,.03);border:1px solid var(--line);
+  color:var(--mut);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .25s;}
+.nav-btn:hover{color:#fff;border-color:rgba(139,92,246,.55);transform:translateY(-1px);
+  background:linear-gradient(135deg,rgba(139,92,246,.2),rgba(34,211,238,.12));
+  box-shadow:0 0 18px -4px rgba(139,92,246,.5);}
+
+.hidden{display:none!important}
+
+/* header bits */
+.wordmark{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:23px;letter-spacing:-.6px;line-height:1.05}
+.tagline{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);margin-top:3px}
+.logo-glow{width:48px;height:48px;border-radius:50%;flex-shrink:0;position:relative;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(circle at 34% 28%,#232741,#0C0E1B 74%);
+  border:1px solid rgba(139,92,246,.4);
+  box-shadow:0 0 0 1px rgba(0,0,0,.4),0 8px 26px -4px rgba(139,92,246,.45),inset 0 1px 1px rgba(255,255,255,.07);}
+.clock{display:flex;align-items:center;gap:8px;padding:8px 13px;border-radius:10px;
+  background:rgba(255,255,255,.03);border:1px solid var(--line);transition:all .25s;}
+.clock:hover{border-color:rgba(34,211,238,.4);box-shadow:0 0 18px -6px rgba(34,211,238,.5)}
+.cdot{width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,#34D399,#22D3EE);
+  box-shadow:0 0 10px rgba(52,211,153,.9);animation:pulse 2s ease-in-out infinite;flex-shrink:0;}
+
+/* chart */
+.bar-col{flex:1;display:flex;flex-direction:column;align-items:center;justify-content:flex-end;height:100%;position:relative;cursor:pointer}
+.bar-stack{width:100%;max-width:42px;height:128px;display:flex;flex-direction:column;justify-content:flex-end;gap:2px;position:relative;margin-bottom:8px}
+.bseg{width:100%;min-height:4px;transform-origin:bottom;animation:growY .85s cubic-bezier(.16,1,.3,1) both;transition:filter .2s}
+.bar-col:hover .bseg{filter:brightness(1.22)}
+.bseg.reg{background:linear-gradient(to top,#0E7490,#22D3EE 58%,#A5F3FC);box-shadow:0 0 18px -2px rgba(34,211,238,.5);border-radius:3px}
+.bseg.reg.solo{border-radius:5px 5px 3px 3px}
+.bseg.ot{background:linear-gradient(to top,#B45309,#F59E0B 55%,#FDE68A);box-shadow:0 0 18px -2px rgba(245,158,11,.5);border-radius:5px 5px 3px 3px}
+.bar-tip{display:none;position:absolute;bottom:calc(100% + 7px);left:50%;transform:translateX(-50%);
+  background:rgba(10,11,22,.96);border:1px solid rgba(255,255,255,.13);border-radius:10px;padding:8px 12px;
+  font-size:11px;font-weight:600;white-space:nowrap;z-index:10;pointer-events:none;
+  box-shadow:0 14px 34px rgba(0,0,0,.55);}
+.bar-col:hover .bar-tip{display:block;animation:fade .18s both}
+.bar-lbl{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:.4px;height:18px;display:flex;align-items:center}
+
+.gauge-fg{animation:gaugeIn 1s cubic-bezier(.16,1,.3,1) both}
+
+.footer-rule{width:56px;height:2px;border-radius:99px;margin:0 auto 14px;
+  background:linear-gradient(90deg,transparent,#8B5CF6,#22D3EE,#F472B6,transparent);
+  background-size:200% 100%;animation:stripflow 5s linear infinite;}
+.site-footer{text-align:center;padding:32px 20px 42px;position:relative;z-index:1}
+.site-footer span{font-size:10px;color:var(--dim);font-weight:700;letter-spacing:1.6px;text-transform:uppercase}
+
+@media(max-width:760px){.bottom-grid{grid-template-columns:1fr!important}}
+@media(max-width:640px){
+  .stat-grid{grid-template-columns:1fr 1fr!important}
+  .day-grid{grid-template-columns:1fr!important}
+}
+@media(max-width:420px){.stat-grid{grid-template-columns:1fr!important}}
+@media (prefers-reduced-motion: reduce){
+  *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
+}
+</style>
 </head>
-
 <body>
-  <!-- Particles Background -->
-  <div id="particles-js"></div>
+<div class="aur aur-1"></div><div class="aur aur-2"></div><div class="aur aur-3"></div><div class="aur aur-4"></div>
+<div class="grid-tex"></div>
 
-  <!-- Premium Splash Screen -->
-  <div id="splash-screen" class="splash-screen">
-    <div class="splash-container">
-      <div class="splash-logo-wrapper">
-        <img src="icons/time-icons_android_192x192.png" alt="TimeVault Logo" width="96" height="96" loading="eager"
-          decoding="async" class="splash-favicon">
-      </div>
+<div class="app">
 
-      <!-- Waves Container - Enhanced ripple effect -->
-      <div class="splash-waves-wrapper">
-        <div class="splash-wave splash-wave-1"></div>
-        <div class="splash-wave splash-wave-2"></div>
-        <div class="splash-wave splash-wave-3"></div>
-        <div class="splash-wave splash-wave-4"></div>
-        <div class="splash-wave splash-wave-5"></div>
-        <div class="splash-wave splash-wave-6"></div>
-        <div class="splash-wave splash-wave-7"></div>
-        <div class="splash-wave splash-wave-8"></div>
-      </div>
-
-      <!-- Loading Indicator -->
-      <div class="splash-loader">
-        <div class="loader-bar"></div>
-      </div>
-
-      <p class="splash-loading-text">Loading...</p>
-    </div>
-  </div>
-
-
-  <!-- Main Dashboard (Hidden until splash fades) -->
-  <div class="app-container" id="app-container">
-    <!-- Left Sidebar -->
-    <div class="app-left">
-      <button class="close-menu" aria-label="Close menu" title="Close menu">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
+  <!-- HEADER -->
+  <header class="a1" style="display:flex;align-items:center;justify-content:space-between;padding:30px 0 24px;flex-wrap:wrap;gap:14px;">
+    <div style="display:flex;align-items:center;gap:14px;">
+      <div class="logo-glow">
+        <svg width="48" height="48" viewBox="0 0 48 48" style="position:absolute;inset:0;">
+          <defs>
+            <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1">
+              <stop offset="0" stop-color="#8B5CF6"/><stop offset=".5" stop-color="#22D3EE"/><stop offset="1" stop-color="#F472B6"/>
+            </linearGradient>
+          </defs>
+          <circle cx="24" cy="24" r="18.5" fill="none" stroke="url(#lg1)" stroke-width="1.2" opacity=".9"/>
+          <line x1="24" y1="6" x2="24" y2="10" stroke="#A78BFA" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="42" y1="24" x2="38" y2="24" stroke="#67E8F9" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="24" y1="42" x2="24" y2="38" stroke="#F472B6" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="6" y1="24" x2="10" y2="24" stroke="#FBBF24" stroke-width="1.5" stroke-linecap="round"/>
+          <line x1="24" y1="24" x2="18.5" y2="14.5" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round"/>
+          <line x1="24" y1="24" x2="31.5" y2="13.5" stroke="#F2F1FA" stroke-width="1.3" stroke-linecap="round"/>
+          <circle cx="24" cy="24" r="1.8" fill="#A78BFA"/>
         </svg>
-      </button>
-      <div class="app-logo">
-        <img src="icons/time-icons_android_192x192.png" alt="TimeVault" class="logo-favicon" width="32" height="32">
-        <span class="logo-text">TimeVault</span>
       </div>
-
-      <!-- Sidebar Collapse Toggle -->
-      <button class="sidebar-toggle" id="sidebar-toggle" aria-label="Toggle sidebar" title="Toggle sidebar">
-        <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <polyline points="11 17 6 12 11 7" />
-          <polyline points="18 17 13 12 18 7" />
-        </svg>
-      </button>
-      <ul class="nav-list">
-
-        <li class="nav-list-item active" data-view="dashboard">
-          <a class="nav-list-link" href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 3h7a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-7m0-18H5a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h7m0-18v18" />
-            </svg>
-            <span class="nav-link-text">Dashboard</span>
-          </a>
-        </li>
-        <li class="nav-list-item" data-view="timecard">
-          <a class="nav-list-link" href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="10" />
-              <polyline points="12 6 12 12 16 14" />
-            </svg>
-            <span class="nav-link-text">Time Card</span>
-          </a>
-        </li>
-        <li class="nav-list-item" data-view="payroll">
-          <a class="nav-list-link" href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="1" x2="12" y2="23" />
-              <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-            </svg>
-            <span class="nav-link-text">Payroll</span>
-          </a>
-        </li>
-        <li class="nav-list-item" data-view="reports">
-          <a class="nav-list-link" href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21.21 15.89A10 10 0 1 1 8 2.83" />
-              <path d="M22 12A10 10 0 0 0 12 2v10z" />
-            </svg>
-            <span class="nav-link-text">Reports</span>
-          </a>
-        </li>
-        <li class="nav-list-item" data-view="settings">
-          <a class="nav-list-link" href="#">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <circle cx="12" cy="12" r="3" />
-              <path
-                d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z" />
-            </svg>
-            <span class="nav-link-text">Settings</span>
-          </a>
-        </li>
-      </ul>
-
-      <!-- Sync Status -->
-      <div class="sync-status" id="sync-status">
-        <div class="sync-indicator offline"></div>
-        <span>Local Mode</span>
+      <div>
+        <div class="wordmark grad-txt">TimeVault</div>
+        <div class="tagline">Work Hours Tracker</div>
       </div>
     </div>
-
-    <!-- Main Content Area -->
-    <div class="app-main">
-      <div class="main-header-line">
-        <div class="header-left">
-          <h1>Dashboard</h1>
-        </div>
-        <div class="action-buttons">
-          <button class="ai-toggle-btn" id="ai-toggle-btn" title="AI Assistant">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path
-                d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73A2 2 0 0 1 12 2z" />
-              <circle cx="8" cy="14" r="2" />
-              <circle cx="16" cy="14" r="2" />
-            </svg>
-          </button>
-          <button class="open-right-area" aria-label="Open notifications panel" title="Open notifications panel">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="22 12 18 12 15 21 9 3 6 12 2 12" />
-            </svg>
-          </button>
-          <button class="menu-button" aria-label="Open navigation menu" title="Open navigation menu">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="3" y1="12" x2="21" y2="12" />
-              <line x1="3" y1="6" x2="21" y2="6" />
-              <line x1="3" y1="18" x2="21" y2="18" />
-            </svg>
-          </button>
-        </div>
+    <div style="display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
+      <div class="clock" title="Local time">
+        <span class="cdot"></span>
+        <span id="clock-time" class="mono" style="font-size:12px;font-weight:600;color:#E9E8F4;">--:--:--</span>
       </div>
-
-      <!-- Dashboard View -->
-      <div id="view-dashboard" class="view-content active">
-        <!-- Clock In/Out Section -->
-        <div class="clock-section">
-          <div class="current-time-display">
-            <span id="current-time">00:00:00</span>
-            <span id="current-date">Loading...</span>
-          </div>
-          <div class="clock-buttons">
-            <button class="clock-btn clock-in" id="clock-in-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polygon points="5 3 19 12 5 21 5 3" />
-              </svg>
-              Clock In
-            </button>
-            <button class="clock-btn clock-out" id="clock-out-btn" disabled>
-              <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="6" y="4" width="4" height="16" />
-                <rect x="14" y="4" width="4" height="16" />
-              </svg>
-              Clock Out
-            </button>
-          </div>
-          <div class="session-timer" id="session-timer">
-            <span class="timer-label">Current Session</span>
-            <span class="timer-value" id="timer-value">00:00:00</span>
-          </div>
-        </div>
-
-        <!-- Pay Summary Cards (4 cards) -->
-        <div class="chart-row four">
-          <div class="chart-container-wrapper">
-            <div class="chart-container pay-card">
-              <div class="chart-info-wrapper">
-                <h2>Today's Pay</h2>
-                <span id="today-pay">$0.00</span>
-                <p class="hours-detail" id="today-hours">0.0 hours</p>
-              </div>
-              <div class="chart-svg">
-                <svg viewBox="0 0 36 36" class="circular-chart pink">
-                  <path class="circle-bg"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                  <path class="circle" id="today-progress" stroke-dasharray="0, 100"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                  <text x="18" y="20.35" class="percentage" id="today-percent">0%</text>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div class="chart-container-wrapper">
-            <div class="chart-container pay-card">
-              <div class="chart-info-wrapper">
-                <h2>This Week</h2>
-                <span id="week-pay">$0.00</span>
-                <p class="hours-detail" id="week-hours">0.0 hours</p>
-              </div>
-              <div class="chart-svg">
-                <svg viewBox="0 0 36 36" class="circular-chart blue">
-                  <path class="circle-bg"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                  <path class="circle" id="week-progress" stroke-dasharray="0, 100"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                  <text x="18" y="20.35" class="percentage" id="week-percent">0%</text>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div class="chart-container-wrapper">
-            <div class="chart-container pay-card">
-              <div class="chart-info-wrapper">
-                <h2>This Month</h2>
-                <span id="month-pay">$0.00</span>
-                <p class="hours-detail" id="month-hours">0.0 hours</p>
-              </div>
-              <div class="chart-svg">
-                <svg viewBox="0 0 36 36" class="circular-chart orange">
-                  <path class="circle-bg"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                  <path class="circle" id="month-progress" stroke-dasharray="0, 100"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                  <text x="18" y="20.35" class="percentage" id="month-percent">0%</text>
-                </svg>
-              </div>
-            </div>
-          </div>
-          <div class="chart-container-wrapper">
-            <div class="chart-container pay-card">
-              <div class="chart-info-wrapper">
-                <h2>Year to Date</h2>
-                <span id="ytd-pay">$0.00</span>
-                <p class="hours-detail" id="ytd-hours">0.0 hours</p>
-              </div>
-              <div class="chart-svg">
-                <svg viewBox="0 0 36 36" class="circular-chart green">
-                  <path class="circle-bg"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                  <path class="circle" id="ytd-progress" stroke-dasharray="0, 100"
-                    d="M18 2.0845 a 15.9155 15.9155 0 0 1 0 31.831 a 15.9155 15.9155 0 0 1 0 -31.831"></path>
-                  <text x="18" y="20.35" class="percentage" id="ytd-percent">0%</text>
-                </svg>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Charts and Time Entries -->
-        <div class="chart-row two">
-          <div class="chart-container-wrapper big">
-            <div class="chart-container">
-              <div class="chart-container-header" style="display:flex;align-items:center;gap:8px;flex-wrap:wrap;">
-                <h2 style="flex:1;">Weekly Hours Overview</h2>
-                <button class="nav-arrow-btn" id="prev-week-btn" title="Previous Week" aria-label="Previous week">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="15 18 9 12 15 6"/></svg>
-                </button>
-                <span id="week-range" style="font-size:13px;color:var(--secondary-color);">This Week</span>
-                <button class="nav-arrow-btn" id="next-week-btn" title="Next Week" aria-label="Next week">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"/></svg>
-                </button>
-                <button id="chart-type-toggle" title="Toggle chart type">📊 Bar</button>
-              </div>
-              <div class="line-chart">
-                <canvas id="chart"></canvas>
-              </div>
-            </div>
-          </div>
-          <div class="chart-container-wrapper small">
-            <div class="chart-container">
-              <div class="chart-container-header">
-                <h2>Hour Distribution</h2>
-                <span>This Month</span>
-              </div>
-              <div class="acquisitions-bar" role="progressbar" aria-label="Hour distribution">
-                <span class="bar-progress regular bar-width-80" id="regular-bar"></span>
-                <span class="bar-progress overtime bar-width-15" id="overtime-bar"></span>
-                <span class="bar-progress breaks bar-width-5" id="breaks-bar"></span>
-              </div>
-              <div class="progress-bar-info">
-                <span class="progress-color regular"></span>
-                <span class="progress-type">Regular Hours</span>
-                <span class="progress-amount" id="regular-percent">80%</span>
-              </div>
-              <div class="progress-bar-info">
-                <span class="progress-color overtime"></span>
-                <span class="progress-type">Overtime</span>
-                <span class="progress-amount" id="overtime-percent">15%</span>
-              </div>
-              <div class="progress-bar-info">
-                <span class="progress-color breaks"></span>
-                <span class="progress-type">Breaks</span>
-                <span class="progress-amount" id="breaks-percent">5%</span>
-              </div>
-            </div>
-            <div class="chart-container entries-list">
-              <div class="chart-container-header">
-                <h2>Recent Time Entries</h2>
-                <span>This Week</span>
-              </div>
-              <div id="recent-entries">
-                <!-- Entries will be dynamically populated -->
-                <div class="entry-line">
-                  <div class="entry-date">Today</div>
-                  <div class="entry-info">
-                    <span class="entry-hours">--:-- - --:--</span>
-                    <p class="entry-duration">No entries yet</p>
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-
-        <!-- Week Day Grid -->
-        <div class="chart-container" style="margin-top:16px;flex-direction:column;">
-          <div class="chart-container-header">
-            <h2>Daily Breakdown</h2>
-            <span id="day-grid-range">This Week</span>
-          </div>
-          <div class="week-days-grid" id="week-days-grid">
-            <!-- Populated dynamically -->
-          </div>
-        </div>
-
-        <!-- Quick Add Form -->
-        <div class="chart-container quick-add-container" style="margin-top:16px;flex-direction:column;">
-          <div class="chart-container-header">
-            <h2>Quick Add Entry</h2>
-          </div>
-          <form id="quick-add-form" style="display:grid;grid-template-columns:1fr 1fr 1fr auto;gap:10px;align-items:end;padding-top:8px;">
-            <div>
-              <label style="font-size:12px;color:var(--secondary-color);display:block;margin-bottom:4px;">Date</label>
-              <input type="date" id="qa-date" required />
-            </div>
-            <div>
-              <label style="font-size:12px;color:var(--secondary-color);display:block;margin-bottom:4px;">Clock In</label>
-              <input type="time" id="qa-start" required />
-            </div>
-            <div>
-              <label style="font-size:12px;color:var(--secondary-color);display:block;margin-bottom:4px;">Clock Out</label>
-              <input type="time" id="qa-end" required />
-            </div>
-            <button type="submit">+ Add</button>
-          </form>
-        </div>
+      <div id="sync-badge" onclick="openSettings()" style="background:rgba(255,255,255,.03);border:1px solid var(--line);border-radius:10px;padding:8px 13px;display:flex;align-items:center;gap:7px;font-size:12px;font-weight:700;color:var(--dim);cursor:pointer;transition:all .25s;">
+        <svg id="sync-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4v5h.582m15.356 2A8 8 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8 8 0 01-15.357-2m15.357 2H15"/></svg>
+        <span id="sync-text" class="mono">Local</span>
       </div>
-
-      <!-- Time Card View -->
-      <div id="view-timecard" class="view-content">
-        <div class="page-header">
-          <h2>Time Card</h2>
-          <button class="add-entry-btn" id="add-entry-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="12" y1="5" x2="12" y2="19" />
-              <line x1="5" y1="12" x2="19" y2="12" />
-            </svg>
-            Add Entry
-          </button>
-        </div>
-
-        <!-- Time Card Filter -->
-        <div class="timecard-filters">
-          <div class="filter-group">
-            <label for="timecard-filter">Filter Period</label>
-            <select id="timecard-filter">
-              <option value="today">Today</option>
-              <option value="week" selected>This Week</option>
-              <option value="month">This Month</option>
-              <option value="all">All Time</option>
-            </select>
-          </div>
-          <div class="filter-stats">
-            <div class="stat-item">
-              <span class="stat-label">Total Hours:</span>
-              <span class="stat-value" id="filter-total-hours">0.0</span>
-            </div>
-            <div class="stat-item">
-              <span class="stat-label">Total Earnings:</span>
-              <span class="stat-value" id="filter-total-earnings">$0.00</span>
-            </div>
-          </div>
-        </div>
-
-        <!-- Time Entries Table -->
-        <div class="timecard-table-wrapper">
-          <table class="timecard-table">
-            <thead>
-              <tr>
-                <th>Date</th>
-                <th>Clock In</th>
-                <th>Clock Out</th>
-                <th>Duration</th>
-                <th>Earnings</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody id="timecard-entries">
-              <tr class="empty-state">
-                <td colspan="6">No time entries yet. Clock in to start tracking!</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
-      </div>
-
-      <!-- Payroll View -->
-      <div id="view-payroll" class="view-content">
-        <div class="page-header">
-          <h2>Payroll Summary</h2>
-          <button class="export-payroll-btn" id="export-payroll-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            Export PDF
-          </button>
-        </div>
-
-        <!-- Payroll Period Selector -->
-        <div class="payroll-period">
-          <label for="payroll-period-select">Pay Period</label>
-          <select id="payroll-period-select">
-            <option value="current-week">Current Week</option>
-            <option value="last-week">Last Week</option>
-            <option value="current-month" selected>Current Month</option>
-            <option value="last-month">Last Month</option>
-            <option value="ytd">Year to Date</option>
-          </select>
-        </div>
-
-        <!-- Payroll Summary Cards -->
-        <div class="payroll-summary">
-          <div class="payroll-card">
-            <h3>Gross Pay</h3>
-            <div class="payroll-amount" id="gross-pay">$0.00</div>
-            <p class="payroll-detail" id="gross-hours">0.0 total hours</p>
-          </div>
-          <div class="payroll-card">
-            <h3>Regular Pay</h3>
-            <div class="payroll-amount" id="regular-pay">$0.00</div>
-            <p class="payroll-detail" id="regular-hours-detail">0.0 hours @ $25.00/hr</p>
-          </div>
-          <div class="payroll-card">
-            <h3>Overtime Pay</h3>
-            <div class="payroll-amount" id="overtime-pay">$0.00</div>
-            <p class="payroll-detail" id="overtime-hours-detail">0.0 hours @ $37.50/hr</p>
-          </div>
-        </div>
-
-        <!-- Payroll Breakdown -->
-        <div class="chart-container">
-          <div class="chart-container-header">
-            <h2>Earnings Breakdown</h2>
-            <span id="payroll-date-range">-</span>
-          </div>
-          <div class="payroll-breakdown">
-            <table class="payroll-table">
-              <thead>
-                <tr>
-                  <th>Week</th>
-                  <th>Regular Hours</th>
-                  <th>OT Hours</th>
-                  <th>Regular Pay</th>
-                  <th>OT Pay</th>
-                  <th>Total</th>
-                </tr>
-              </thead>
-              <tbody id="payroll-breakdown-body">
-                <tr class="empty-state">
-                  <td colspan="6">No payroll data for selected period</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Reports View -->
-      <div id="view-reports" class="view-content">
-        <div class="page-header">
-          <h2>Reports & Analytics</h2>
-          <button class="export-report-btn" id="export-report-btn">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-              <polyline points="7 10 12 15 17 10" />
-              <line x1="12" y1="15" x2="12" y2="3" />
-            </svg>
-            Export CSV
-          </button>
-        </div>
-
-        <!-- Report Stats Grid -->
-        <div class="report-stats-grid">
-          <div class="stat-card">
-            <div class="stat-icon blue">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <circle cx="12" cy="12" r="10" />
-                <polyline points="12 6 12 12 16 14" />
-              </svg>
-            </div>
-            <div class="stat-info">
-              <h3>Total Hours</h3>
-              <div class="stat-number" id="report-total-hours">0.0</div>
-              <p class="stat-change">All time</p>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon green">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <line x1="12" y1="1" x2="12" y2="23" />
-                <path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6" />
-              </svg>
-            </div>
-            <div class="stat-info">
-              <h3>Total Earnings</h3>
-              <div class="stat-number" id="report-total-earnings">$0.00</div>
-              <p class="stat-change">All time</p>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon orange">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <polyline points="23 6 13.5 15.5 8.5 10.5 1 18" />
-                <polyline points="17 6 23 6 23 12" />
-              </svg>
-            </div>
-            <div class="stat-info">
-              <h3>Avg Hours/Day</h3>
-              <div class="stat-number" id="report-avg-hours">0.0</div>
-              <p class="stat-change">Last 30 days</p>
-            </div>
-          </div>
-          <div class="stat-card">
-            <div class="stat-icon pink">
-              <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <rect x="3" y="4" width="18" height="18" rx="2" ry="2" />
-                <line x1="16" y1="2" x2="16" y2="6" />
-                <line x1="8" y1="2" x2="8" y2="6" />
-                <line x1="3" y1="10" x2="21" y2="10" />
-              </svg>
-            </div>
-            <div class="stat-info">
-              <h3>Days Worked</h3>
-              <div class="stat-number" id="report-days-worked">0</div>
-              <p class="stat-change">Last 30 days</p>
-            </div>
-          </div>
-        </div>
-
-        <!-- Monthly Report Chart -->
-        <div class="chart-container">
-          <div class="chart-container-header">
-            <h2>Monthly Hours & Earnings</h2>
-            <span>Last 12 Months</span>
-          </div>
-          <div class="line-chart">
-            <canvas id="report-chart"></canvas>
-          </div>
-        </div>
-
-        <!-- Detailed Report Table -->
-        <div class="chart-container">
-          <div class="chart-container-header">
-            <h2>Detailed Time Report</h2>
-            <div class="report-date-filter">
-              <label for="report-start-date">From:</label>
-              <input type="date" id="report-start-date" />
-              <label for="report-end-date">To:</label>
-              <input type="date" id="report-end-date" />
-              <button id="filter-report-btn" class="filter-btn">Apply</button>
-            </div>
-          </div>
-          <div class="report-table-wrapper">
-            <table class="report-table">
-              <thead>
-                <tr>
-                  <th>Date</th>
-                  <th>Day</th>
-                  <th>Hours Worked</th>
-                  <th>Earnings</th>
-                  <th>Status</th>
-                </tr>
-              </thead>
-              <tbody id="report-table-body">
-                <tr class="empty-state">
-                  <td colspan="5">No data for selected period</td>
-                </tr>
-              </tbody>
-            </table>
-          </div>
-        </div>
-      </div>
-
-      <!-- Settings View -->
-      <div id="view-settings" class="view-content">
-        <div class="page-header">
-          <h2>Settings</h2>
-        </div>
-
-        <div class="settings-container">
-          <!-- Rate Configuration -->
-          <div class="settings-section">
-            <h3>Pay Rate Configuration</h3>
-            <div class="settings-grid">
-              <div class="setting-item">
-                <label for="settings-hourly-rate">Hourly Rate ($)</label>
-                <input type="number" id="settings-hourly-rate" value="25.00" step="0.01" min="0"
-                  aria-label="Hourly rate" />
-              </div>
-              <div class="setting-item">
-                <label for="settings-overtime-multiplier">Overtime Multiplier</label>
-                <select id="settings-overtime-multiplier" aria-label="Overtime multiplier">
-                  <option value="1.5">1.5x (Time and a half)</option>
-                  <option value="2">2x (Double time)</option>
-                  <option value="1">1x (No overtime)</option>
-                </select>
-              </div>
-              <div class="setting-item">
-                <label for="settings-overtime-threshold">Overtime After (hours/week)</label>
-                <input type="number" id="settings-overtime-threshold" value="40" min="0" max="168"
-                  aria-label="Overtime threshold" />
-              </div>
-              <div class="setting-item">
-                <label for="settings-weekly-target">Weekly Target (hours)</label>
-                <input type="number" id="settings-weekly-target" value="40" min="0" max="168"
-                  aria-label="Weekly target hours" />
-              </div>
-            </div>
-          </div>
-
-          <!-- Display Settings -->
-          <div class="settings-section">
-            <h3>Display Settings</h3>
-            <div class="settings-grid">
-              <div class="setting-item">
-                <label for="settings-currency">Currency Symbol</label>
-                <select id="settings-currency" aria-label="Currency symbol">
-                  <option value="$">$ (USD)</option>
-                  <option value="€">€ (EUR)</option>
-                  <option value="£">£ (GBP)</option>
-                  <option value="¥">¥ (JPY/CNY)</option>
-                </select>
-              </div>
-              <div class="setting-item">
-                <label for="settings-time-format">Time Format</label>
-                <select id="settings-time-format" aria-label="Time format">
-                  <option value="12">12-hour (AM/PM)</option>
-                  <option value="24">24-hour</option>
-                </select>
-              </div>
-              <div class="setting-item">
-                <label for="settings-date-format">Date Format</label>
-                <select id="settings-date-format" aria-label="Date format">
-                  <option value="MM/DD/YYYY">MM/DD/YYYY</option>
-                  <option value="DD/MM/YYYY">DD/MM/YYYY</option>
-                  <option value="YYYY-MM-DD">YYYY-MM-DD</option>
-                </select>
-              </div>
-            </div>
-          </div>
-
-          <!-- Data Management -->
-          <div class="settings-section">
-            <h3>Data Management</h3>
-            <div class="settings-actions">
-              <button id="settings-export-data" class="settings-btn primary">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="17 8 12 3 7 8" />
-                  <line x1="12" y1="3" x2="12" y2="15" />
-                </svg>
-                Export All Data
-              </button>
-              <button id="settings-import-data" class="settings-btn primary">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                  <polyline points="7 10 12 15 17 10" />
-                  <line x1="12" y1="15" x2="12" y2="3" />
-                </svg>
-                Import Data
-              </button>
-              <button id="settings-clear-data" class="settings-btn danger">
-                <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-                  stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="3 6 5 6 21 6" />
-                  <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2" />
-                </svg>
-                Clear All Data
-              </button>
-            </div>
-            <p class="settings-warning">⚠️ Clearing data will permanently delete all time entries and settings</p>
-          </div>
-
-          <!-- JSONBin Cloud Sync -->
-          <div class="settings-section">
-            <h3>☁️ JSONBin Cloud Sync</h3>
-            <div class="settings-grid">
-              <div class="setting-item">
-                <label for="jsonbin-api-key">JSONBin API Key</label>
-                <input type="password" id="jsonbin-api-key" placeholder="Enter your JSONBin Master/Access Key" />
-              </div>
-              <div class="setting-item">
-                <label for="jsonbin-bin-id">Bin ID (leave blank to auto-create)</label>
-                <input type="text" id="jsonbin-bin-id" placeholder="e.g. 664a1b2c3d4e5f..." />
-              </div>
-            </div>
-            <div class="settings-actions" style="margin-top:12px;">
-              <button id="jsonbin-test-btn" class="settings-btn primary">Test Connection</button>
-              <button id="jsonbin-push-btn" class="settings-btn primary">Push to Cloud</button>
-              <button id="jsonbin-pull-btn" class="settings-btn primary">Pull from Cloud</button>
-            </div>
-            <div id="jsonbin-status" style="margin-top:10px;font-size:13px;color:var(--secondary-color);"></div>
-          </div>
-
-          <!-- About -->
-          <div class="settings-section">
-            <h3>About TimeVault</h3>
-            <div class="about-info">
-              <p><strong>Version:</strong> 2.0.0</p>
-              <p><strong>Build:</strong> 2026.02.06</p>
-              <p><strong>Storage:</strong> <span id="storage-used">0 KB</span> used</p>
-              <p class="about-desc">Premium time tracking PWA with AI assistance and local-first data storage.</p>
-            </div>
-          </div>
-
-          <div class="setting-row">
-            <button id="generate-summary-btn" class="action-btn full-width mt-sm">Generate Weekly Summary</button>
-          </div>
-
-          <div class="settings-footer">
-            <button id="save-settings-btn" class="btn-save-settings">Save Settings</button>
-          </div>
-        </div>
-      </div>
-    </div>
-
-    <!-- Right Panel - AI Assistant & Notifications -->
-    <div class="app-right">
-      <button class="close-right" aria-label="Close panel" title="Close panel">
-        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-          stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-          <line x1="18" y1="6" x2="6" y2="18" />
-          <line x1="6" y1="6" x2="18" y2="18" />
-        </svg>
+      <button class="btn btn-s" onclick="openSettings()" style="padding:8px 14px;border-radius:10px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
+        Settings
       </button>
+    </div>
+  </header>
 
-      <!-- AI Assistant Section -->
-      <div class="ai-assistant-section">
-        <div class="ai-header">
-          <div class="ai-avatar">
-            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path
-                d="M12 2a2 2 0 0 1 2 2c0 .74-.4 1.39-1 1.73V7h1a7 7 0 0 1 7 7h1a1 1 0 0 1 1 1v3a1 1 0 0 1-1 1h-1v1a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-1H2a1 1 0 0 1-1-1v-3a1 1 0 0 1 1-1h1a7 7 0 0 1 7-7h1V5.73A2 2 0 0 1 12 2z" />
-              <circle cx="8" cy="14" r="2" />
-              <circle cx="16" cy="14" r="2" />
-            </svg>
-          </div>
-          <div class="ai-info">
-            <h3>TimeVault AI</h3>
-            <div class="ai-connection-wrapper">
-              <span id="ai-connection-status" class="ai-connection-indicator disconnected"></span>
-              <span id="ai-connection-text" class="ai-status">🟡 Local Only</span>
-            </div>
-          </div>
-        </div>
+  <!-- STATS -->
+  <div id="stat-grid" class="stat-grid a2" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;"></div>
 
-        <!-- Smart Suggestions Panel -->
-        <div class="smart-suggestions-wrapper">
-          <div class="suggestions-header">
-            <span>💡 Smart Suggestions</span>
-          </div>
-          <div id="smart-suggestions" class="smart-suggestions">
-            <p class="suggestions-empty">Loading suggestions...</p>
-          </div>
-        </div>
-
-        <div class="ai-chat-container" id="ai-chat">
-          <div class="ai-message ai-response">
-            <p>👋 Hi! I'm your TimeVault AI assistant. I can help you with:</p>
-            <ul>
-              <li>Tracking your work hours</li>
-              <li>Calculating your earnings</li>
-              <li>Analyzing your time patterns</li>
-              <li>Setting pay rate reminders</li>
-            </ul>
-            <p>Ask me anything about your time tracking!</p>
-          </div>
-        </div>
-        <div class="ai-input-wrapper">
-          <button id="voice-input-btn" class="voice-btn" aria-label="Voice input" title="Voice Input">
-            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <path d="M12 2a3 3 0 0 0-3 3v7a3 3 0 0 0 6 0V5a3 3 0 0 0-3-3z" />
-              <path d="M19 10v2a7 7 0 0 1-14 0v-2" />
-              <line x1="12" y1="19" x2="12" y2="22" />
-            </svg>
-          </button>
-          <input type="text" id="ai-input" placeholder="Ask TimeVault AI..." />
-          <button id="ai-send-btn" aria-label="Send message" title="Send message">
-            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <line x1="22" y1="2" x2="11" y2="13" />
-              <polygon points="22 2 15 22 11 13 2 9 22 2" />
-            </svg>
-          </button>
-        </div>
+  <!-- NAV -->
+  <div class="a3" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;">
+    <div style="display:flex;align-items:center;gap:10px;">
+      <button class="nav-btn" onclick="changeWeek(-1)" aria-label="Previous week">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+      </button>
+      <div style="text-align:center;min-width:176px;">
+        <div id="week-label" class="disp" style="font-weight:700;font-size:18px;letter-spacing:-.4px;"></div>
+        <div id="week-range" class="mono" style="font-size:11px;color:var(--dim);margin-top:2px;"></div>
       </div>
-
-
-      <!-- Sync & Settings Panel -->
-      <div class="app-right-section">
-        <div class="app-right-section-header">
-          <h2>Sync & Backup</h2>
-          <span class="notification-active">
-            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-              stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-              <polyline points="23 4 23 10 17 10" />
-              <polyline points="1 20 1 14 7 14" />
-              <path d="M3.51 9a9 9 0 0 1 14.85-3.36L23 10M1 14l4.64 4.36A9 9 0 0 0 20.49 15" />
-            </svg>
-          </span>
-        </div>
-        <div class="sync-panel">
-          <div class="sync-option">
-            <label>Email Sync</label>
-            <input type="email" id="sync-email" placeholder="your@email.com" />
-            <button id="sync-email-btn" class="sync-btn">Sync</button>
-          </div>
-          <div class="sync-divider">or</div>
-          <div class="sync-option">
-            <label>PIN Code (4-8 digits)</label>
-            <input type="text" id="sync-pin" placeholder="Enter PIN" maxlength="8" pattern="[0-9]*" />
-            <button id="sync-pin-btn" class="sync-btn">Sync</button>
-          </div>
-          <div class="sync-actions">
-            <button id="export-data-btn" class="action-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="17 8 12 3 7 8" />
-                <line x1="12" y1="3" x2="12" y2="15" />
-              </svg>
-              Export Data
-            </button>
-            <button id="import-data-btn" class="action-btn">
-              <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
-                stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M21 15v4a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2v-4" />
-                <polyline points="7 10 12 15 17 10" />
-                <line x1="12" y1="15" x2="12" y2="3" />
-              </svg>
-              Import Data
-            </button>
-          </div>
-        </div>
-      </div>
-
-      <!-- Quick Settings -->
-      <div class="app-right-section">
-        <div class="app-right-section-header">
-          <h2>Quick Settings</h2>
-        </div>
-        <div class="settings-panel">
-          <div class="setting-row">
-            <label for="hourly-rate">Hourly Rate</label>
-            <div class="rate-input-wrapper">
-              <span>$</span>
-              <input type="number" id="hourly-rate" value="25.00" step="0.01" min="0" title="Enter your hourly pay rate"
-                aria-label="Hourly rate in dollars" />
-              <span>/hr</span>
-            </div>
-          </div>
-          <div class="setting-row">
-            <label for="overtime-multiplier">Overtime Rate</label>
-            <select id="overtime-multiplier" title="Select overtime multiplier" aria-label="Overtime rate multiplier">
-              <option value="1.5">1.5x (Time and a half)</option>
-              <option value="2">2x (Double time)</option>
-              <option value="1">1x (No overtime)</option>
-            </select>
-          </div>
-          <div class="setting-row">
-            <label for="weekly-target">Weekly Hours Target</label>
-            <input type="number" id="weekly-target" value="40" min="0" max="168" title="Target hours per week"
-              aria-label="Weekly hours target" />
-          </div>
-        </div>
-      </div>
+      <button class="nav-btn" onclick="changeWeek(1)" aria-label="Next week">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+      </button>
+    </div>
+    <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;">
+      <button id="today-btn" class="btn btn-p hidden" onclick="goToday()" style="padding:8px 16px;border-radius:10px;font-size:12px;">↩ Today</button>
+      <button class="btn btn-d" onclick="clearWeek()" style="padding:8px 13px;border-radius:10px;font-size:12px;">Clear Week</button>
+      <button class="btn btn-s" onclick="doExport()" style="padding:8px 13px;border-radius:10px;font-size:12px;">Export CSV</button>
     </div>
   </div>
 
-  <!-- Footer with Favicon and Credit -->
-  <footer class="app-footer" id="app-footer">
-    <div class="footer-content">
-      <img src="icons/time-icons_android_192x192.png" alt="TimeVault" class="footer-favicon" width="24" height="24">
-      <span>TimeVault &copy; 2026</span>
-    </div>
-    <div class="credit">
-      Developed by <span class="techguru">L|T</span> · Powered by <span class="techguru">TECHGURU</span>
-    </div>
-  </footer>
+  <!-- DAY GRID -->
+  <div id="day-grid" class="day-grid a3" style="display:grid;grid-template-columns:repeat(auto-fill,minmax(252px,1fr));gap:12px;margin-bottom:20px;"></div>
 
-
-  <!-- Settings Modal -->
-  <div id="settings-modal" class="modal hidden">
-    <div class="modal-content">
-      <div class="modal-header">
-        <h2>Settings</h2>
-        <button class="modal-close" id="close-settings">&times;</button>
-      </div>
-      <div class="modal-body">
-        <div class="settings-group">
-          <h3>Pay Configuration</h3>
-          <div class="setting-item">
-            <label for="modal-hourly-rate">Default Hourly Rate ($)</label>
-            <input type="number" id="modal-hourly-rate" value="25.00" step="0.01" min="0"
-              title="Enter default hourly rate" aria-label="Default hourly rate" />
-          </div>
-          <div class="setting-item">
-            <label for="overtime-threshold">Overtime After (hours/week)</label>
-            <input type="number" id="overtime-threshold" value="40" min="0" max="168"
-              title="Hours before overtime kicks in" aria-label="Overtime threshold hours" />
-          </div>
-          <div class="setting-item">
-            <label for="modal-overtime-rate">Overtime Rate Multiplier</label>
-            <select id="modal-overtime-rate" title="Select overtime rate multiplier"
-              aria-label="Overtime rate multiplier">
-              <option value="1.5">1.5x</option>
-              <option value="2">2x</option>
-              <option value="1">No overtime</option>
-            </select>
-          </div>
-        </div>
-        <div class="settings-group">
-          <h3>Display</h3>
-          <div class="setting-item">
-            <label for="currency-symbol">Currency Symbol</label>
-            <select id="currency-symbol" title="Select currency symbol" aria-label="Currency symbol">
-              <option value="$">$ (USD)</option>
-              <option value="€">€ (EUR)</option>
-              <option value="£">£ (GBP)</option>
-              <option value="¥">¥ (JPY/CNY)</option>
-            </select>
-          </div>
-          <div class="setting-item">
-            <label for="time-format">Time Format</label>
-            <select id="time-format" title="Select time format" aria-label="Time format">
-              <option value="12">12-hour (AM/PM)</option>
-              <option value="24">24-hour</option>
-            </select>
-          </div>
-        </div>
-        <div class="settings-group">
-          <h3>🤖 AI Configuration</h3>
-          <div class="setting-item">
-            <label for="ollama-enabled">Enable Ollama AI</label>
-            <input type="checkbox" id="ollama-enabled" checked title="Enable Ollama integration" />
-          </div>
-          <div class="setting-item">
-            <label for="ollama-local-url">Local Ollama URL</label>
-            <input type="text" id="ollama-local-url" value="http://localhost:11434" placeholder="http://localhost:11434"
-              title="Local Ollama server URL" />
-          </div>
-          <div class="setting-item">
-            <label for="ollama-remote-url">Remote Ollama URL</label>
-            <input type="text" id="ollama-remote-url" value="" placeholder="https://your-server.com:11434"
-              title="Remote Ollama server URL (when away)" />
-          </div>
-          <div class="setting-item">
-            <label for="ollama-model">Ollama Model</label>
-            <select id="ollama-model" title="Select Ollama model">
-              <option value="llama3.2:latest">llama3.2:latest</option>
-              <option value="llama3.1:8b">llama3.1:8b</option>
-              <option value="qwen3.5:latest">qwen3.5:latest</option>
-              <option value="qwen2.5-coder:1.5b-base">qwen2.5-coder:1.5b-base</option>
-              <option value="gemma3:4b">gemma3:4b</option>
-              <option value="nomic-embed-text:latest">nomic-embed-text:latest</option>
-            </select>
-          </div>
-          <div class="setting-item setting-actions">
-            <button id="test-ollama-btn" class="secondary-btn">Test Connection</button>
-            <button id="save-ai-settings-btn" class="primary-btn">Save AI Settings</button>
-          </div>
-        </div>
-        <div class="settings-group">
-          <h3>Data Management</h3>
-          <div class="setting-item">
-            <button id="clear-all-data" class="danger-btn">Clear All Data</button>
-            <p class="warning-text">This will permanently delete all your time entries and settings.</p>
-          </div>
+  <!-- BOTTOM -->
+  <div class="bottom-grid a4" style="display:grid;grid-template-columns:1fr 330px;gap:12px;align-items:start;">
+    <div class="card" style="padding:20px;">
+      <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:18px;flex-wrap:wrap;gap:8px;">
+        <div class="disp" style="font-weight:600;font-size:15px;letter-spacing:-.2px;">Weekly Breakdown</div>
+        <div style="display:flex;gap:14px;">
+          <div style="display:flex;align-items:center;gap:6px;"><div style="width:9px;height:9px;border-radius:3px;background:linear-gradient(135deg,#0E7490,#22D3EE);box-shadow:0 0 8px rgba(34,211,238,.6);"></div><span style="font-size:11px;color:var(--mut);font-weight:600;">Regular</span></div>
+          <div style="display:flex;align-items:center;gap:6px;"><div style="width:9px;height:9px;border-radius:3px;background:linear-gradient(135deg,#B45309,#F59E0B);box-shadow:0 0 8px rgba(245,158,11,.6);"></div><span style="font-size:11px;color:var(--mut);font-weight:600;">Overtime</span></div>
         </div>
       </div>
+      <div id="chart-wrap" style="display:flex;align-items:flex-end;gap:7px;height:170px;position:relative;"></div>
+    </div>
+    <div class="card" style="padding:20px;">
+      <div style="display:flex;align-items:center;gap:9px;margin-bottom:16px;">
+        <div style="width:26px;height:26px;border-radius:8px;background:linear-gradient(135deg,#7C3AED,#D946EF);display:flex;align-items:center;justify-content:center;box-shadow:0 4px 14px -3px rgba(217,70,239,.6);">
+          <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><polyline points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/></svg>
+        </div>
+        <div class="disp" style="font-weight:600;font-size:15px;letter-spacing:-.2px;">Quick Add Today</div>
+      </div>
+      <div style="margin-bottom:10px;"><label class="lbl">Start</label><input class="inp" type="time" id="qa-start" value="09:00"></div>
+      <div style="margin-bottom:10px;"><label class="lbl">End</label><input class="inp" type="time" id="qa-end" value="17:30"></div>
+      <div style="margin-bottom:12px;"><label class="lbl">Break (min)</label><input class="inp" type="number" id="qa-brk" value="30" min="0"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(52,211,153,.09),rgba(34,211,238,.07));border:1px solid rgba(52,211,153,.22);border-radius:12px;padding:12px 15px;margin-bottom:12px;">
+        <span style="font-size:12px;color:var(--mut);font-weight:700;">Net Hours</span>
+        <span id="qa-hrs" class="mono" style="font-size:24px;font-weight:700;letter-spacing:-.5px;"></span>
+      </div>
+      <button class="btn btn-p" onclick="addToday()" style="width:100%;padding:12px;border-radius:11px;font-size:13px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        Add to Today
+      </button>
     </div>
   </div>
+</div>
 
-  <!-- Edit / Add Entry Modal -->
-  <div id="edit-entry-modal" class="modal hidden">
-    <div class="modal-content" style="max-width:460px;">
-      <div class="modal-header">
-        <h2 id="edit-modal-title">Edit Entry</h2>
-        <button class="modal-close" id="close-edit-modal">&times;</button>
+<footer class="site-footer">
+  <div class="footer-rule"></div>
+  <span>Powered by TECHGURU</span>
+</footer>
+
+<!-- EDIT MODAL -->
+<div id="edit-modal" class="mo-overlay hidden">
+  <div class="mo-box">
+    <div style="padding:20px 22px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:flex-start;justify-content:space-between;">
+      <div>
+        <div id="edit-title" class="disp" style="font-weight:700;font-size:19px;letter-spacing:-.4px;"></div>
+        <div id="edit-sub" style="font-size:12px;color:var(--dim);margin-top:3px;font-weight:600;"></div>
       </div>
-      <div class="modal-body">
-        <input type="hidden" id="edit-entry-id" />
-        <div class="setting-item">
-          <label for="edit-date">Date</label>
-          <input type="date" id="edit-date" />
-        </div>
-        <div class="setting-item">
-          <label for="edit-start">Clock In</label>
-          <input type="time" id="edit-start" />
-        </div>
-        <div class="setting-item">
-          <label for="edit-end">Clock Out</label>
-          <input type="time" id="edit-end" />
-        </div>
+      <button onclick="closeEdit()" class="btn btn-s" style="padding:6px;border-radius:8px;width:28px;height:28px;flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="padding:20px 22px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div><label class="lbl">Start Time</label><input class="inp" type="time" id="e-start"></div>
+        <div><label class="lbl">End Time</label><input class="inp" type="time" id="e-end"></div>
       </div>
-      <div class="modal-body" style="padding-top:0;display:flex;gap:10px;justify-content:flex-end;">
-        <button id="edit-cancel-btn" class="settings-btn danger" style="min-width:80px;">Cancel</button>
-        <button id="edit-save-btn" class="settings-btn primary" style="min-width:80px;">Save</button>
+      <div style="margin-bottom:16px;"><label class="lbl">Break (min)</label><input class="inp" type="number" id="e-brk" min="0"></div>
+      <div style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(34,211,238,.07));border:1px solid rgba(52,211,153,.24);border-radius:13px;padding:15px 18px;">
+        <div><div style="font-size:10px;color:var(--mut);font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px;">Net Hours</div><div style="font-size:11px;color:var(--dim);font-weight:600;">Break deducted</div></div>
+        <span id="e-hrs" class="mono" style="font-size:32px;font-weight:700;letter-spacing:-1px;"></span>
       </div>
     </div>
+    <div style="padding:14px 22px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:flex-end;gap:8px;">
+      <button id="del-btn" class="btn btn-d hidden" onclick="deleteEntry()" style="margin-right:auto;">Delete</button>
+      <button class="btn btn-s" onclick="closeEdit()">Cancel</button>
+      <button class="btn btn-p" onclick="saveEntry()">Save Entry</button>
+    </div>
   </div>
+</div>
 
-  <!-- Import File Input (Hidden) -->
-  <input type="file" id="import-file" accept=".json,.csv,.pdf" class="visually-hidden" aria-label="Import backup file">
+<!-- SETTINGS MODAL -->
+<div id="sett-modal" class="mo-overlay hidden">
+  <div class="mo-box">
+    <div style="padding:20px 22px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:center;justify-content:space-between;">
+      <div>
+        <div class="disp" style="font-weight:700;font-size:19px;letter-spacing:-.4px;">Settings</div>
+        <div style="font-size:12px;color:var(--dim);margin-top:3px;font-weight:600;">Rates, schedule & sync</div>
+      </div>
+      <button onclick="closeSett()" class="btn btn-s" style="padding:6px;border-radius:8px;width:28px;height:28px;flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="padding:20px 22px;">
+      <div style="display:grid;grid-template-columns:1fr 1fr;gap:12px;margin-bottom:12px;">
+        <div><label class="lbl">Hourly Rate ($)</label><input class="inp" type="number" id="s-rate" min="0" step="0.01"></div>
+        <div><label class="lbl">OT Multiplier</label><input class="inp" type="number" id="s-otmul" min="1" step="0.1"></div>
+        <div><label class="lbl">OT Threshold (hrs)</label><input class="inp" type="number" id="s-othr" min="0" step="1"></div>
+        <div><label class="lbl">Default Break (min)</label><input class="inp" type="number" id="s-brk" min="0" step="5"></div>
+      </div>
+      <div style="margin-bottom:16px;">
+        <label class="lbl">Week Starts On</label>
+        <select class="inp" id="s-wkst">
+          <option value="0">Sunday</option>
+          <option value="1">Monday</option>
+          <option value="6">Saturday</option>
+        </select>
+      </div>
+      <div style="margin-top:18px;padding:16px;border-radius:14px;background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(34,211,238,.05));border:1px dashed rgba(139,92,246,.32);">
+        <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;">
+          <div style="width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,#8B5CF6,#22D3EE);box-shadow:0 0 10px rgba(139,92,246,.9);"></div>
+          <div style="font-size:10px;font-weight:800;letter-spacing:.8px;text-transform:uppercase;background:linear-gradient(90deg,#A78BFA,#67E8F9);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">Cross-Device Sync • JSONBin.io</div>
+        </div>
+        <p style="font-size:12px;color:var(--dim);margin-bottom:12px;line-height:1.65;font-weight:500;">Free — create account at <strong style="color:var(--mut);">jsonbin.io</strong>, copy your Master Key, then Push to create a private cloud bin.</p>
+        <div style="margin-bottom:10px;"><label class="lbl">JSONBin Master Key</label><input class="inp" type="text" id="s-jbk" placeholder="$2b$10$..." style="font-size:12px;"></div>
+        <div style="margin-bottom:14px;"><label class="lbl">Bin ID (auto-filled)</label><input class="inp" type="text" id="s-jbid" placeholder="64abc123..." style="font-size:12px;"></div>
+        <div style="display:grid;grid-template-columns:1fr 1fr;gap:10px;">
+          <button class="btn btn-s" onclick="doPush()" style="border-color:rgba(139,92,246,.4);color:var(--vio-h);background:rgba(139,92,246,.1);">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="19" x2="12" y2="5"/><polyline points="5 12 12 5 19 12"/></svg>
+            Push to Cloud
+          </button>
+          <button class="btn btn-g" onclick="doPull()">
+            <svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><polyline points="19 12 12 19 5 12"/></svg>
+            Pull from Cloud
+          </button>
+        </div>
+      </div>
+    </div>
+    <div style="padding:14px 22px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:flex-end;gap:8px;">
+      <button class="btn btn-s" onclick="closeSett()">Cancel</button>
+      <button class="btn btn-p" onclick="saveSettings()">Save Settings</button>
+    </div>
+  </div>
+</div>
 
-  <!-- Service Worker Registration -->
-  <script>
-    if ('serviceWorker' in navigator) {
-      window.addEventListener('load', () => {
-        navigator.serviceWorker.register('sw.js').then(registration => {
-          console.log('TimeVault: Service Worker registered successfully', registration);
-        }).catch(error => {
-          console.log('TimeVault: Service Worker registration failed', error);
-        });
-      });
+<div class="toast-box" id="toasts"></div>
+
+<script>
+var entries = {};
+var settings = {hourlyRate:35,overtimeRate:1.5,overtimeThreshold:40,defaultBreak:30,weekStart:1,jbKey:'',jbId:''};
+var weekOffset = 0;
+var editState = {date:null,idx:null};
+var prevStats = {tot:0,ot:0,earn:0,worked:0};
+var syncTimer = null;
+var REDUCED = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+/* ---------- helpers ---------- */
+function gWS(d, ws) {
+  ws = ws === undefined ? 1 : ws;
+  var x = new Date(d); x.setHours(0,0,0,0);
+  var df = x.getDay() - ws; if (df < 0) df += 7;
+  x.setDate(x.getDate() - df); return x;
+}
+function gDK(d) {
+  return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0');
+}
+function fT(t) {
+  var p = t.split(':').map(Number), h = p[0], m = p[1];
+  return (h%12||12)+':'+(m<10?'0':'')+m+' '+(h>=12?'PM':'AM');
+}
+function cH(s, e, b) {
+  var sp = s.split(':').map(Number), ep = e.split(':').map(Number);
+  var sv = sp[0]*60+sp[1], ev = ep[0]*60+ep[1];
+  if (ev < sv) ev += 1440;
+  return Math.max(0, (ev - sv - b)/60);
+}
+function fc(v) { return '$'+v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+function todayKey() { return gDK(new Date()); }
+function getDays() {
+  var ws = gWS(new Date(), settings.weekStart);
+  ws.setDate(ws.getDate() + weekOffset*7);
+  var days = [];
+  for (var i=0;i<7;i++){ var d = new Date(ws); d.setDate(ws.getDate()+i); days.push(d); }
+  return days;
+}
+function daySum(key){ return (entries[key]||[]).reduce(function(s,e){return s+e.hours;},0); }
+
+/* ---------- storage ---------- */
+function loadData(){
+  try{
+    var er = localStorage.getItem('tv_e'); if (er) entries = JSON.parse(er);
+    var sr = localStorage.getItem('tv_s');
+    if (sr){ var p = JSON.parse(sr); for (var k in settings){ if (p.hasOwnProperty(k)) settings[k] = p[k]; } }
+  }catch(e){}
+}
+function saveEntries(){
+  try{ localStorage.setItem('tv_e', JSON.stringify(entries)); }catch(e){}
+  if (settings.jbKey && settings.jbId){
+    clearTimeout(syncTimer);
+    setSyncState('syncing');
+    syncTimer = setTimeout(function(){
+      jbPush(settings.jbKey, settings.jbId, entries)
+        .then(function(){ setSyncState('synced'); })
+        .catch(function(){ setSyncState('error'); });
+    }, 1200);
+  }
+}
+function saveSettingsStore(){
+  try{ localStorage.setItem('tv_s', JSON.stringify(settings)); }catch(e){}
+}
+
+/* ---------- jsonbin ---------- */
+var JB = 'https://api.jsonbin.io/v3/b';
+function jbPush(k, id, d){
+  return fetch(JB+'/'+id, {method:'PUT', headers:{'Content-Type':'application/json','X-Master-Key':k}, body:JSON.stringify({entries:d})})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); });
+}
+function jbCreate(k, d){
+  return fetch(JB, {method:'POST', headers:{'Content-Type':'application/json','X-Master-Key':k,'X-Bin-Private':'true','X-Bin-Name':'TimeVault'}, body:JSON.stringify({entries:d})})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(j){ return j.metadata.id; });
+}
+function jbFetch(k, id){
+  return fetch(JB+'/'+id+'/latest', {headers:{'X-Master-Key':k}})
+    .then(function(r){ if(!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function(j){ return (j.record && j.record.entries) ? j.record.entries : {}; });
+}
+
+function setSyncState(s){
+  var badge = document.getElementById('sync-badge'),
+      txt = document.getElementById('sync-text'),
+      icon = document.getElementById('sync-icon');
+  var states = {
+    offline:{c:'var(--dim)',   bg:'rgba(255,255,255,.03)', bc:'var(--line)', m:'Local'},
+    linked: {c:'var(--cyn-h)', bg:'rgba(34,211,238,.08)',  bc:'rgba(34,211,238,.32)', m:'Cloud linked'},
+    syncing:{c:'var(--vio-h)', bg:'rgba(139,92,246,.1)',   bc:'rgba(139,92,246,.38)', m:'Syncing…'},
+    synced: {c:'var(--emr-h)', bg:'rgba(52,211,153,.1)',   bc:'rgba(52,211,153,.35)', m:'Synced ✓'},
+    error:  {c:'#FDA4AF',      bg:'rgba(251,113,133,.1)',  bc:'rgba(251,113,133,.35)', m:'Sync failed'}
+  };
+  var st = states[s] || states.offline;
+  badge.style.color = st.c; badge.style.background = st.bg; badge.style.borderColor = st.bc;
+  txt.textContent = st.m;
+  icon.style.animation = (s === 'syncing') ? 'spin 1s linear infinite' : '';
+}
+
+function toast(msg, type){
+  type = type || 'info';
+  var strips = {
+    success:'linear-gradient(180deg,#34D399,#22D3EE)',
+    error:'linear-gradient(180deg,#FB7185,#FB923C)',
+    warning:'linear-gradient(180deg,#FBBF24,#FB923C)',
+    info:'linear-gradient(180deg,#8B5CF6,#22D3EE)'
+  };
+  var dots = {success:'#34D399',error:'#FB7185',warning:'#FBBF24',info:'#A78BFA'};
+  var el = document.createElement('div');
+  el.className = 'toast';
+  el.style.setProperty('--tstrip', strips[type] || strips.info);
+  el.innerHTML = '<div style="width:8px;height:8px;border-radius:50%;background:'+(dots[type]||dots.info)+';box-shadow:0 0 9px '+(dots[type]||dots.info)+';flex-shrink:0;"></div><span style="font-size:13px;font-weight:700;">'+msg+'</span>';
+  document.getElementById('toasts').appendChild(el);
+  setTimeout(function(){ el.style.transition='opacity .3s,transform .3s'; el.style.opacity='0'; el.style.transform='translateX(40px)'; setTimeout(function(){el.remove();},300); }, 3200);
+}
+
+/* ---------- navigation ---------- */
+function changeWeek(d){ weekOffset += d; render(); }
+function goToday(){ weekOffset = 0; render(); }
+function getWLabel(ws){
+  var tw = gWS(new Date(), settings.weekStart);
+  var diff = Math.round((ws - tw)/(7*86400000));
+  if (diff === 0) return 'This Week';
+  if (diff === -1) return 'Last Week';
+  if (diff === 1) return 'Next Week';
+  return ws.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+}
+function getStats(days){
+  var tot = 0, worked = 0;
+  days.forEach(function(d){
+    var h = daySum(gDK(d));
+    if (h > 0){ tot += h; worked++; }
+  });
+  var ot = Math.max(0, tot - settings.overtimeThreshold);
+  var reg = tot - ot;
+  var earn = reg*settings.hourlyRate + ot*settings.hourlyRate*settings.overtimeRate;
+  return {tot:tot, ot:ot, reg:reg, earn:earn, worked:worked};
+}
+
+/* ---------- gauges & count-up ---------- */
+function gaugeSVG(pct, gid, c1, c2){
+  var r = 17, circ = 2*Math.PI*r;
+  var cl = Math.min(Math.max(pct,0),100);
+  var off = circ*(1 - cl/100);
+  return '<svg width="44" height="44" viewBox="0 0 44 44" style="flex-shrink:0;">'+
+    '<defs><linearGradient id="'+gid+'" x1="0" y1="0" x2="1" y2="1">'+
+      '<stop offset="0" stop-color="'+c1+'"/><stop offset="1" stop-color="'+c2+'"/>'+
+    '</linearGradient></defs>'+
+    '<circle cx="22" cy="22" r="'+r+'" fill="none" stroke="rgba(255,255,255,.07)" stroke-width="3.5"/>'+
+    '<circle class="gauge-fg" cx="22" cy="22" r="'+r+'" fill="none" stroke="url(#'+gid+')" stroke-width="3.5" stroke-linecap="round" '+
+      'stroke-dasharray="'+circ.toFixed(2)+'" stroke-dashoffset="'+off.toFixed(2)+'" transform="rotate(-90 22 22)"/>'+
+  '</svg>';
+}
+function countUp(id, from, to, fmt){
+  var el = document.getElementById(id); if (!el) return;
+  if (REDUCED || from === to){ el.textContent = fmt(to); return; }
+  var dur = 780, t0 = null;
+  function step(ts){
+    if (!t0) t0 = ts;
+    var p = Math.min((ts - t0)/dur, 1);
+    var e = 1 - Math.pow(1-p, 3);
+    el.textContent = fmt(from + (to-from)*e);
+    if (p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+
+/* ---------- render ---------- */
+function render(){
+  var days = getDays();
+  var ws = gWS(new Date(), settings.weekStart);
+  ws.setDate(ws.getDate() + weekOffset*7);
+  var stats = getStats(days);
+
+  document.getElementById('week-label').textContent = getWLabel(ws);
+  document.getElementById('week-range').textContent =
+    days[0].toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+
+    days[6].toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'});
+  document.getElementById('today-btn').classList.toggle('hidden', weekOffset === 0);
+
+  /* stats */
+  var cards = [
+    {id:'sv-tot',   label:'Total Hours', v:stats.tot,    unit:'hrs this week', c1:'#8B5CF6', c2:'#22D3EE', pct:Math.min(stats.tot/60*100,100), size:23, fmt:function(v){return v.toFixed(1);}},
+    {id:'sv-ot',    label:'Overtime',    v:stats.ot,     unit:'hrs extra',     c1:'#FB923C', c2:'#FB7185', pct:Math.min(stats.ot/20*100,100),  size:23, fmt:function(v){return v.toFixed(1);}},
+    {id:'sv-earn',  label:'Earnings',    v:stats.earn,   unit:'this week',     c1:'#34D399', c2:'#22D3EE', pct:Math.min(stats.earn/2000*100,100), size:19, fmt:function(v){return fc(v);}},
+    {id:'sv-work',  label:'Days Worked', v:stats.worked, unit:'of 7 days',     c1:'#60A5FA', c2:'#A78BFA', pct:stats.worked/7*100, size:23, fmt:function(v){return String(Math.round(v));}}
+  ];
+  var sg = document.getElementById('stat-grid');
+  sg.innerHTML = cards.map(function(c,i){
+    return '<div class="card rise" style="padding:16px;overflow:hidden;animation-delay:'+(i*70)+'ms;">'+
+      '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,'+c.c1+','+c.c2+',transparent);"></div>'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px;">'+
+        '<div style="min-width:0;">'+
+          '<div class="eyebrow" style="margin-bottom:10px;">'+c.label+'</div>'+
+          '<div class="mono" id="'+c.id+'" style="font-size:'+c.size+'px;font-weight:700;letter-spacing:-.6px;line-height:1;margin-bottom:6px;white-space:nowrap;background:linear-gradient(120deg,'+c.c1+','+c.c2+');-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">'+c.fmt(c.v)+'</div>'+
+          '<div style="font-size:11px;color:var(--dim);font-weight:600;">'+c.unit+'</div>'+
+        '</div>'+
+        gaugeSVG(c.pct, 'g-'+c.id, c.c1, c.c2)+
+      '</div>'+
+    '</div>';
+  }).join('');
+  countUp('sv-tot', prevStats.tot, stats.tot, cards[0].fmt);
+  countUp('sv-ot', prevStats.ot, stats.ot, cards[1].fmt);
+  countUp('sv-earn', prevStats.earn, stats.earn, cards[2].fmt);
+  countUp('sv-work', prevStats.worked, stats.worked, cards[3].fmt);
+  prevStats = {tot:stats.tot, ot:stats.ot, earn:stats.earn, worked:stats.worked};
+
+  /* day grid */
+  var dg = document.getElementById('day-grid');
+  var tk = todayKey();
+  dg.innerHTML = days.map(function(d, di){
+    var key = gDK(d);
+    var dayEnts = entries[key] || [];
+    var tot = dayEnts.reduce(function(s,e){return s+e.hours;},0);
+    var isToday = (key === tk);
+    var isOT = tot > 8;
+    var statusHTML;
+    if (tot === 0){
+      statusHTML = '<span class="mono" style="font-size:13px;font-weight:700;color:var(--dim);">—</span>';
+    } else {
+      var sgrad = isOT ? 'linear-gradient(120deg,#FBBF24,#FB923C,#FB7185)' : 'linear-gradient(120deg,#6EE7B7,#22D3EE)';
+      statusHTML = '<span class="mono" style="font-size:13px;font-weight:700;background:'+sgrad+';-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">'+
+        (isOT ? tot.toFixed(1)+'h OT' : tot.toFixed(1)+'h')+'</span>';
     }
-  </script>
+    var todayBadge = isToday ? '<span style="font-size:9px;font-weight:800;letter-spacing:.6px;background:linear-gradient(120deg,#7C3AED,#D946EF);color:#fff;padding:2px 8px;border-radius:99px;text-transform:uppercase;box-shadow:0 2px 10px -2px rgba(217,70,239,.6);">Today</span>' : '';
+    var prog = tot > 0 ? '<div class="prog"><div class="fill'+(isOT?' ot':'')+'" style="width:'+Math.min(tot/10*100,100)+'%;animation-delay:'+(di*60)+'ms;"></div></div>' : '';
+    var entryRows = dayEnts.map(function(e, idx){
+      var chip = e.hours > 8
+        ? 'background:linear-gradient(135deg,rgba(251,146,60,.16),rgba(251,113,133,.14));color:#FDBA74;border:1px solid rgba(251,146,60,.32)'
+        : 'background:linear-gradient(135deg,rgba(52,211,153,.14),rgba(34,211,238,.12));color:var(--emr-h);border:1px solid rgba(52,211,153,.3)';
+      return '<div class="entry-row" onclick="openEdit(\''+key+'\','+idx+')">'+
+        '<span style="font-size:13px;font-weight:700;">'+fT(e.start)+' <span style="color:var(--dim);font-weight:500;">–</span> '+fT(e.end)+'</span>'+
+        '<span class="mono" style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;'+chip+'">'+e.hours.toFixed(2)+'h</span>'+
+      '</div>';
+    }).join('');
+    var inner = '<div class="card" style="padding:15px;height:100%;">'+
+      '<div style="display:flex;justify-content:space-between;align-items:flex-start;margin-bottom:11px;">'+
+        '<div>'+
+          '<div style="display:flex;align-items:center;gap:7px;margin-bottom:2px;">'+
+            '<div class="disp" style="font-weight:700;font-size:14px;">'+d.toLocaleDateString('en-US',{weekday:'long'})+'</div>'+
+            todayBadge+
+          '</div>'+
+          '<div style="font-size:11px;color:var(--dim);font-weight:600;">'+d.toLocaleDateString('en-US',{month:'short',day:'numeric'})+'</div>'+
+        '</div>'+
+        statusHTML+
+      '</div>'+
+      prog+
+      '<div style="margin-bottom:'+(tot>0?'8':'0')+'px;">'+entryRows+'</div>'+
+      '<button class="day-add" onclick="openEdit(\''+key+'\',null)">'+
+        '<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>'+
+        'Add Entry'+
+      '</button>'+
+    '</div>';
+    return isToday ? '<div class="today-wrap">'+inner+'</div>' : inner;
+  }).join('');
 
-  <!-- Main Application Script -->
-  <script src="apps.js"></script>
+  renderChart(days);
+  updateQA();
+}
 
-  <!-- Initialize TimeVault -->
-  <div id="toast-container" class="toast-container"></div>
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      document.body.style.overflow = 'hidden';
-      TimeVault.init();
+function renderChart(days){
+  var data = days.map(function(d){
+    var h = daySum(gDK(d));
+    return {day:d.toLocaleDateString('en-US',{weekday:'short'}), reg:Math.min(h,8), ot:Math.max(0,h-8)};
+  });
+  var maxV = Math.max(10, Math.max.apply(null, data.map(function(d){return d.reg+d.ot;})));
+  var total = data.reduce(function(s,d){return s+d.reg+d.ot;},0);
+  var wrap = document.getElementById('chart-wrap');
+  var lines = [0,.25,.5,.75,1].map(function(f){
+    var op = f === 0 ? '.09' : '.045';
+    return '<div style="position:absolute;top:'+(144 - f*128)+'px;left:0;right:0;height:1px;background:rgba(255,255,255,'+op+');pointer-events:none;"></div>';
+  }).join('');
+  var bars = data.map(function(d,i){
+    var rH = +(d.reg/maxV*128).toFixed(1);
+    var oH = +(d.ot/maxV*128).toFixed(1);
+    var has = d.reg > 0 || d.ot > 0;
+    var delay = (i*70)+'ms';
+    var tip = has ? '<div class="bar-tip mono">'+
+      '<div style="color:#fff;font-weight:700;margin-bottom:3px;">'+(d.reg+d.ot).toFixed(1)+'h total</div>'+
+      '<div style="color:var(--cyn-h);">'+d.reg.toFixed(1)+'h regular</div>'+
+      (d.ot>0 ? '<div style="color:#FCD34D;">'+d.ot.toFixed(1)+'h overtime</div>' : '')+
+    '</div>' : '';
+    var otBar = oH > 0 ? '<div class="bseg ot" style="height:'+oH+'px;animation-delay:'+delay+';"></div>' : '';
+    var regBar = rH > 0 ? '<div class="bseg reg'+(oH>0?'':' solo')+'" style="height:'+rH+'px;animation-delay:'+delay+';"></div>' : '';
+    return '<div class="bar-col">'+
+      '<div class="bar-stack">'+tip+otBar+regBar+'</div>'+
+      '<div class="bar-lbl">'+d.day+'</div>'+
+    '</div>';
+  }).join('');
+  var empty = total === 0 ? '<div style="position:absolute;inset:0;display:flex;align-items:center;justify-content:center;pointer-events:none;"><span style="font-size:12px;color:var(--dim);font-weight:700;letter-spacing:.4px;background:rgba(10,11,22,.55);padding:8px 16px;border-radius:99px;border:1px solid var(--line);backdrop-filter:blur(4px);">No hours logged this week — add your first entry ↑</span></div>' : '';
+  wrap.innerHTML = lines + bars + empty;
+}
+
+/* ---------- quick add ---------- */
+function updateQA(){
+  var s = document.getElementById('qa-start').value;
+  var e = document.getElementById('qa-end').value;
+  var b = parseInt(document.getElementById('qa-brk').value) || 0;
+  var h = (s && e) ? cH(s,e,b) : 0;
+  document.getElementById('qa-hrs').innerHTML =
+    '<span style="background:linear-gradient(120deg,#6EE7B7,#22D3EE);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">'+h.toFixed(2)+'</span>'+
+    '<span style="font-size:11px;color:var(--dim);margin-left:4px;font-weight:400;-webkit-text-fill-color:var(--dim);">hrs</span>';
+}
+function addToday(){
+  var s = document.getElementById('qa-start').value;
+  var e = document.getElementById('qa-end').value;
+  var b = parseInt(document.getElementById('qa-brk').value) || 0;
+  if (!s || !e){ toast('Enter start & end times','warning'); return; }
+  var h = cH(s,e,b);
+  var key = todayKey();
+  if (!entries[key]) entries[key] = [];
+  entries[key].push({start:s, end:e, break:b, hours:h});
+  saveEntries();
+  if (weekOffset !== 0) weekOffset = 0;
+  render();
+  toast('Added to today!','success');
+}
+
+/* ---------- edit modal ---------- */
+function openEdit(dateKey, idx){
+  editState.date = dateKey;
+  editState.idx = idx;
+  var isNew = (idx === null || idx === undefined);
+  var ex = null;
+  if (!isNew){ ex = (entries[dateKey]||[])[idx] || null; }
+  var d = new Date(dateKey+'T12:00:00');
+  document.getElementById('edit-title').textContent = isNew ? 'New Entry' : 'Edit Entry';
+  document.getElementById('edit-sub').textContent = d.toLocaleDateString('en-US',{weekday:'long',month:'long',day:'numeric'});
+  document.getElementById('e-start').value = ex ? ex.start : '09:00';
+  document.getElementById('e-end').value = ex ? ex.end : '17:30';
+  document.getElementById('e-brk').value = ex ? ex.break : settings.defaultBreak;
+  updateEditHrs();
+  document.getElementById('del-btn').classList.toggle('hidden', isNew);
+  document.getElementById('edit-modal').classList.remove('hidden');
+}
+function closeEdit(){ document.getElementById('edit-modal').classList.add('hidden'); }
+function updateEditHrs(){
+  var s = document.getElementById('e-start').value;
+  var e = document.getElementById('e-end').value;
+  var b = parseInt(document.getElementById('e-brk').value) || 0;
+  var h = (s && e) ? cH(s,e,b) : 0;
+  document.getElementById('e-hrs').innerHTML =
+    '<span style="background:linear-gradient(120deg,#6EE7B7,#22D3EE);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">'+h.toFixed(2)+'</span>'+
+    '<span style="font-size:13px;color:var(--dim);margin-left:4px;font-weight:400;-webkit-text-fill-color:var(--dim);">hrs</span>';
+}
+function saveEntry(){
+  var dateKey = editState.date, idx = editState.idx;
+  var s = document.getElementById('e-start').value;
+  var e = document.getElementById('e-end').value;
+  if (!s || !e){ toast('Enter start & end times','warning'); return; }
+  var b = parseInt(document.getElementById('e-brk').value) || 0;
+  var entry = {start:s, end:e, break:b, hours:cH(s,e,b)};
+  if (!entries[dateKey]) entries[dateKey] = [];
+  var isNew = (idx === null || idx === undefined);
+  if (!isNew){ entries[dateKey][idx] = entry; } else { entries[dateKey].push(entry); }
+  saveEntries();
+  render();
+  closeEdit();
+  toast('Entry saved','success');
+}
+function deleteEntry(){
+  var dateKey = editState.date, idx = editState.idx;
+  if (!dateKey || idx === null || idx === undefined) return;
+  var arr = entries[dateKey] || [];
+  arr.splice(idx,1);
+  if (arr.length === 0){ delete entries[dateKey]; } else { entries[dateKey] = arr; }
+  saveEntries();
+  render();
+  closeEdit();
+  toast('Deleted','info');
+}
+
+/* ---------- settings ---------- */
+function openSettings(){
+  document.getElementById('s-rate').value = settings.hourlyRate;
+  document.getElementById('s-otmul').value = settings.overtimeRate;
+  document.getElementById('s-othr').value = settings.overtimeThreshold;
+  document.getElementById('s-brk').value = settings.defaultBreak;
+  document.getElementById('s-wkst').value = String(settings.weekStart);
+  document.getElementById('s-jbk').value = settings.jbKey || '';
+  document.getElementById('s-jbid').value = settings.jbId || '';
+  document.getElementById('sett-modal').classList.remove('hidden');
+}
+function closeSett(){ document.getElementById('sett-modal').classList.add('hidden'); }
+function saveSettings(){
+  settings.hourlyRate = parseFloat(document.getElementById('s-rate').value) || 35;
+  settings.overtimeRate = parseFloat(document.getElementById('s-otmul').value) || 1.5;
+  settings.overtimeThreshold = parseFloat(document.getElementById('s-othr').value) || 40;
+  settings.defaultBreak = parseInt(document.getElementById('s-brk').value) || 30;
+  var w = parseInt(document.getElementById('s-wkst').value);
+  settings.weekStart = isNaN(w) ? 1 : w;
+  settings.jbKey = document.getElementById('s-jbk').value.trim();
+  settings.jbId = document.getElementById('s-jbid').value.trim();
+  saveSettingsStore();
+  setSyncState((settings.jbKey && settings.jbId) ? 'linked' : 'offline');
+  render();
+  closeSett();
+  toast('Settings saved','success');
+}
+function doPush(){
+  var k = document.getElementById('s-jbk').value.trim();
+  var id = document.getElementById('s-jbid').value.trim();
+  if (!k){ toast('Enter JSONBin API key','warning'); return; }
+  setSyncState('syncing');
+  var p = id ? jbPush(k,id,entries).then(function(){return id;}) : jbCreate(k,entries);
+  p.then(function(newId){
+    settings.jbKey = k; settings.jbId = newId;
+    document.getElementById('s-jbid').value = newId;
+    saveSettingsStore();
+    setSyncState('synced');
+    toast(id ? 'Sync complete!' : 'Bin created & pushed!','success');
+  }).catch(function(){ setSyncState('error'); toast('Sync failed','error'); });
+}
+function doPull(){
+  var k = document.getElementById('s-jbk').value.trim();
+  var id = document.getElementById('s-jbid').value.trim();
+  if (!k || !id){ toast('Key and ID required','warning'); return; }
+  setSyncState('syncing');
+  jbFetch(k,id).then(function(data){
+    entries = data;
+    saveEntries();
+    render();
+    setSyncState('synced');
+    toast('Data pulled!','success');
+  }).catch(function(){ setSyncState('error'); toast('Pull failed','error'); });
+}
+
+/* ---------- week actions ---------- */
+function clearWeek(){
+  if (!confirm('Clear this entire week?')) return;
+  getDays().forEach(function(d){ delete entries[gDK(d)]; });
+  saveEntries();
+  render();
+  toast('Week cleared','info');
+}
+function doExport(){
+  var rows = ['Date,Start,End,Break,Hours'];
+  Object.keys(entries).sort().forEach(function(d){
+    entries[d].forEach(function(e){
+      rows.push(d+','+e.start+','+e.end+','+e.break+','+e.hours.toFixed(2));
     });
-  </script>
+  });
+  var blob = new Blob([rows.join('\n')],{type:'text/csv'});
+  var url = URL.createObjectURL(blob);
+  var a = document.createElement('a');
+  a.href = url; a.download = 'timevault-'+gDK(new Date())+'.csv'; a.click();
+  URL.revokeObjectURL(url);
+  toast('Exported!','success');
+}
 
+/* ---------- clock ---------- */
+function tickClock(){
+  var n = new Date();
+  document.getElementById('clock-time').textContent =
+    String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
+}
+
+/* ---------- listeners & boot ---------- */
+document.getElementById('qa-start').addEventListener('input', updateQA);
+document.getElementById('qa-end').addEventListener('input', updateQA);
+document.getElementById('qa-brk').addEventListener('input', updateQA);
+document.getElementById('e-start').addEventListener('input', updateEditHrs);
+document.getElementById('e-end').addEventListener('input', updateEditHrs);
+document.getElementById('e-brk').addEventListener('input', updateEditHrs);
+document.getElementById('edit-modal').addEventListener('click', function(ev){ if (ev.target === this) closeEdit(); });
+document.getElementById('sett-modal').addEventListener('click', function(ev){ if (ev.target === this) closeSett(); });
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ closeEdit(); closeSett(); } });
+
+loadData();
+setSyncState((settings.jbKey && settings.jbId) ? 'linked' : 'offline');
+render();
+tickClock();
+setInterval(tickClock, 1000);
+</script>
 </body>
-
 </html>
