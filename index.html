@@ -4,6 +4,39 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>TimeVault — Work Hours Tracker</title>
+<meta name="description" content="TimeVault — a premium work hours tracker with live clock in/out, payroll calculations, and weekly summaries.">
+<meta name="theme-color" content="#06070D">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="TimeVault">
+<meta name="msapplication-config" content="browserconfig.xml">
+<meta name="msapplication-TileColor" content="#3d7eff">
+
+<!-- Favicon / taskbar icon -->
+<link rel="icon" type="image/x-icon" href="icons/time-icons_favicon.ico">
+<link rel="icon" type="image/png" sizes="16x16" href="icons/time-icons_favicon_16x16.png">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/time-icons_favicon_32x32.png">
+<link rel="icon" type="image/png" sizes="48x48" href="icons/time-icons_favicon_48x48.png">
+<link rel="icon" type="image/png" sizes="96x96" href="icons/time-icons_favicon_96x96.png">
+<link rel="shortcut icon" href="icons/time-icons_favicon.ico">
+
+<!-- Apple touch icons -->
+<link rel="apple-touch-icon" sizes="57x57" href="icons/time-icons_apple_57x57.png">
+<link rel="apple-touch-icon" sizes="60x60" href="icons/time-icons_apple_60x60.png">
+<link rel="apple-touch-icon" sizes="68x68" href="icons/time-icons_apple_68x68.png">
+<link rel="apple-touch-icon" sizes="72x72" href="icons/time-icons_apple_72x72.png">
+<link rel="apple-touch-icon" sizes="76x76" href="icons/time-icons_apple_76x76.png">
+<link rel="apple-touch-icon" sizes="114x114" href="icons/time-icons_apple_114x114.png">
+<link rel="apple-touch-icon" sizes="120x120" href="icons/time-icons_apple_120x120.png">
+<link rel="apple-touch-icon" sizes="144x144" href="icons/time-icons_apple_144x144.png">
+<link rel="apple-touch-icon" sizes="152x152" href="icons/time-icons_apple_152x152.png">
+<link rel="apple-touch-icon" sizes="167x167" href="icons/time-icons_apple_167x167.png">
+<link rel="apple-touch-icon" sizes="180x180" href="icons/time-icons_apple_180x180.png">
+
+<!-- PWA manifest (installable icon, desktop/taskbar identity) -->
+<link rel="manifest" href="manifest.json">
+
 <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <link href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@latest/500.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@fontsource/space-grotesk@latest/700.css" rel="stylesheet">
@@ -197,6 +230,31 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
 
 .hidden{display:none!important}
 
+/* live clock widget */
+.live-card{position:relative;overflow:hidden;padding:18px 20px;margin-bottom:20px;
+  background:linear-gradient(160deg,var(--panel),var(--panel-2));border:1px solid var(--line);
+  border-radius:var(--r-lg);}
+.live-card.active{border-color:rgba(52,211,153,.4);box-shadow:0 0 0 1px rgba(52,211,153,.12),0 12px 34px -14px rgba(52,211,153,.35);}
+.live-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;
+  background:linear-gradient(90deg,#34D399,#22D3EE,transparent);opacity:0;transition:opacity .35s;}
+.live-card.active::before{opacity:1;}
+.live-row{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;}
+.live-left{display:flex;align-items:center;gap:13px;}
+.live-dot{width:10px;height:10px;border-radius:50%;background:var(--dim);flex-shrink:0;}
+.live-card.active .live-dot{background:#34D399;box-shadow:0 0 10px #34D399;animation:pulseDot 1.8s ease-in-out infinite;}
+@keyframes pulseDot{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.5;transform:scale(.82)}}
+.live-status{font-size:11px;font-weight:800;letter-spacing:.6px;text-transform:uppercase;color:var(--dim);margin-bottom:3px;}
+.live-card.active .live-status{color:var(--emr-h);}
+.live-elapsed{font-size:26px;font-weight:700;letter-spacing:-.5px;line-height:1;}
+.live-since{font-size:11px;color:var(--dim);font-weight:600;margin-top:4px;}
+.live-right{display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.live-brk{display:flex;align-items:center;gap:7px;}
+.live-brk .lbl{margin:0;}
+.live-brk .inp{width:74px;padding:8px 10px;font-size:12px;}
+.entry-note{font-size:10px;font-weight:700;color:var(--mut);background:rgba(255,255,255,.05);
+  border:1px solid var(--line);border-radius:99px;padding:2px 9px;margin-left:8px;
+  max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;display:inline-block;vertical-align:middle;}
+
 /* header bits */
 .wordmark{font-family:'Space Grotesk',sans-serif;font-weight:700;font-size:23px;letter-spacing:-.6px;line-height:1.05}
 .tagline{font-size:10px;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--dim);margin-top:3px}
@@ -254,21 +312,7 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
   <header class="a1" style="display:flex;align-items:center;justify-content:space-between;padding:30px 0 24px;flex-wrap:wrap;gap:14px;">
     <div style="display:flex;align-items:center;gap:14px;">
       <div class="logo-glow">
-        <svg width="48" height="48" viewBox="0 0 48 48" style="position:absolute;inset:0;">
-          <defs>
-            <linearGradient id="lg1" x1="0" y1="0" x2="1" y2="1">
-              <stop offset="0" stop-color="#8B5CF6"/><stop offset=".5" stop-color="#22D3EE"/><stop offset="1" stop-color="#F472B6"/>
-            </linearGradient>
-          </defs>
-          <circle cx="24" cy="24" r="18.5" fill="none" stroke="url(#lg1)" stroke-width="1.2" opacity=".9"/>
-          <line x1="24" y1="6" x2="24" y2="10" stroke="#A78BFA" stroke-width="1.5" stroke-linecap="round"/>
-          <line x1="42" y1="24" x2="38" y2="24" stroke="#67E8F9" stroke-width="1.5" stroke-linecap="round"/>
-          <line x1="24" y1="42" x2="24" y2="38" stroke="#F472B6" stroke-width="1.5" stroke-linecap="round"/>
-          <line x1="6" y1="24" x2="10" y2="24" stroke="#FBBF24" stroke-width="1.5" stroke-linecap="round"/>
-          <line x1="24" y1="24" x2="18.5" y2="14.5" stroke="#A78BFA" stroke-width="1.8" stroke-linecap="round"/>
-          <line x1="24" y1="24" x2="31.5" y2="13.5" stroke="#F2F1FA" stroke-width="1.3" stroke-linecap="round"/>
-          <circle cx="24" cy="24" r="1.8" fill="#A78BFA"/>
-        </svg>
+        <img src="icons/time-icons_logo.png" alt="TimeVault" width="48" height="48" style="border-radius:11px;display:block;object-fit:cover;">
       </div>
       <div>
         <div class="wordmark grad-txt">TimeVault</div>
@@ -284,6 +328,10 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
         <svg id="sync-icon" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M4 4v5h.582m15.356 2A8 8 0 004.582 9m0 0H9m11 11v-5h-.581m0 0a8 8 0 01-15.357-2m15.357 2H15"/></svg>
         <span id="sync-text" class="mono">Local</span>
       </div>
+      <button class="btn btn-s" onclick="openMonthly()" style="padding:8px 14px;border-radius:10px;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg>
+        This Month
+      </button>
       <button class="btn btn-s" onclick="openSettings()" style="padding:8px 14px;border-radius:10px;">
         <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.996.608 2.296.07 2.572-1.065zM15 12a3 3 0 11-6 0 3 3 0 016 0z"/></svg>
         Settings
@@ -293,6 +341,30 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
 
   <!-- STATS -->
   <div id="stat-grid" class="stat-grid a2" style="display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-bottom:20px;"></div>
+
+  <!-- LIVE CLOCK -->
+  <div id="live-card" class="live-card a2">
+    <div class="live-row">
+      <div class="live-left">
+        <span class="live-dot"></span>
+        <div>
+          <div id="live-status" class="live-status">Not Clocked In</div>
+          <div id="live-elapsed" class="mono live-elapsed">00:00:00</div>
+          <div id="live-since" class="live-since hidden"></div>
+        </div>
+      </div>
+      <div class="live-right">
+        <div id="live-brk-wrap" class="live-brk hidden">
+          <label class="lbl" for="live-brk">Break (min)</label>
+          <input class="inp" type="number" id="live-brk" min="0" step="5" value="30">
+        </div>
+        <button id="live-btn" class="btn btn-g" onclick="toggleClock()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg>
+          Clock In
+        </button>
+      </div>
+    </div>
+  </div>
 
   <!-- NAV -->
   <div class="a3" style="display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;gap:10px;flex-wrap:wrap;">
@@ -310,6 +382,7 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
     </div>
     <div style="display:flex;gap:7px;align-items:center;flex-wrap:wrap;">
       <button id="today-btn" class="btn btn-p hidden" onclick="goToday()" style="padding:8px 16px;border-radius:10px;font-size:12px;">↩ Today</button>
+      <button class="btn btn-s" onclick="copyLastWeek()" style="padding:8px 13px;border-radius:10px;font-size:12px;">Copy Last Week</button>
       <button class="btn btn-d" onclick="clearWeek()" style="padding:8px 13px;border-radius:10px;font-size:12px;">Clear Week</button>
       <button class="btn btn-s" onclick="doExport()" style="padding:8px 13px;border-radius:10px;font-size:12px;">Export CSV</button>
     </div>
@@ -339,7 +412,8 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
       </div>
       <div style="margin-bottom:10px;"><label class="lbl">Start</label><input class="inp" type="time" id="qa-start" value="09:00"></div>
       <div style="margin-bottom:10px;"><label class="lbl">End</label><input class="inp" type="time" id="qa-end" value="17:30"></div>
-      <div style="margin-bottom:12px;"><label class="lbl">Break (min)</label><input class="inp" type="number" id="qa-brk" value="30" min="0"></div>
+      <div style="margin-bottom:10px;"><label class="lbl">Break (min)</label><input class="inp" type="number" id="qa-brk" value="30" min="0"></div>
+      <div style="margin-bottom:12px;"><label class="lbl" for="qa-note">Note (optional)</label><input class="inp" type="text" id="qa-note" maxlength="80" placeholder="e.g. Site B, on-call"></div>
       <div style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(52,211,153,.09),rgba(34,211,238,.07));border:1px solid rgba(52,211,153,.22);border-radius:12px;padding:12px 15px;margin-bottom:12px;">
         <span style="font-size:12px;color:var(--mut);font-weight:700;">Net Hours</span>
         <span id="qa-hrs" class="mono" style="font-size:24px;font-weight:700;letter-spacing:-.5px;"></span>
@@ -375,6 +449,7 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
         <div><label class="lbl">End Time</label><input class="inp" type="time" id="e-end"></div>
       </div>
       <div style="margin-bottom:16px;"><label class="lbl">Break (min)</label><input class="inp" type="number" id="e-brk" min="0"></div>
+      <div style="margin-bottom:16px;"><label class="lbl" for="e-note">Note (optional)</label><input class="inp" type="text" id="e-note" maxlength="80" placeholder="e.g. Site B, on-call"></div>
       <div style="display:flex;align-items:center;justify-content:space-between;background:linear-gradient(135deg,rgba(52,211,153,.1),rgba(34,211,238,.07));border:1px solid rgba(52,211,153,.24);border-radius:13px;padding:15px 18px;">
         <div><div style="font-size:10px;color:var(--mut);font-weight:700;letter-spacing:.8px;text-transform:uppercase;margin-bottom:2px;">Net Hours</div><div style="font-size:11px;color:var(--dim);font-weight:600;">Break deducted</div></div>
         <span id="e-hrs" class="mono" style="font-size:32px;font-weight:700;letter-spacing:-1px;"></span>
@@ -415,6 +490,18 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
           <option value="6">Saturday</option>
         </select>
       </div>
+      <div style="margin-bottom:18px;padding:14px 16px;border-radius:14px;background:rgba(255,255,255,.03);border:1px solid var(--line);">
+        <div style="display:flex;align-items:center;justify-content:space-between;margin-bottom:12px;">
+          <label class="lbl" style="margin:0;">Clock-Out Reminders</label>
+          <label style="display:inline-flex;align-items:center;gap:8px;cursor:pointer;">
+            <input type="checkbox" id="s-remind-on" style="width:16px;height:16px;accent-color:var(--vio);">
+            <span style="font-size:12px;color:var(--mut);font-weight:600;">Enabled</span>
+          </label>
+        </div>
+        <label class="lbl" for="s-remind-hrs">Remind me after (hours clocked in)</label>
+        <input class="inp" type="number" id="s-remind-hrs" min="1" step="0.5" value="8">
+        <p style="font-size:11px;color:var(--dim);margin-top:8px;line-height:1.5;font-weight:500;">Sends a browser notification if you forget to clock out. You'll be asked to allow notifications the first time you clock in.</p>
+      </div>
       <div style="margin-top:18px;padding:16px;border-radius:14px;background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(34,211,238,.05));border:1px dashed rgba(139,92,246,.32);">
         <div style="display:flex;align-items:center;gap:7px;margin-bottom:10px;">
           <div style="width:7px;height:7px;border-radius:50%;background:linear-gradient(135deg,#8B5CF6,#22D3EE);box-shadow:0 0 10px rgba(139,92,246,.9);"></div>
@@ -444,9 +531,38 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
 
 <div class="toast-box" id="toasts"></div>
 
+<!-- MONTHLY SUMMARY MODAL -->
+<div id="monthly-modal" class="mo-overlay hidden">
+  <div class="mo-box">
+    <div style="padding:20px 22px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:flex-start;justify-content:space-between;">
+      <div style="display:flex;align-items:center;gap:10px;">
+        <button class="nav-btn" onclick="changeMonth(-1)" aria-label="Previous month">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="15 18 9 12 15 6"/></svg>
+        </button>
+        <div>
+          <div id="monthly-title" class="disp" style="font-weight:700;font-size:19px;letter-spacing:-.4px;"></div>
+          <div style="font-size:12px;color:var(--dim);margin-top:3px;font-weight:600;">Monthly summary</div>
+        </div>
+        <button class="nav-btn" onclick="changeMonth(1)" aria-label="Next month">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polyline points="9 18 15 12 9 6"/></svg>
+        </button>
+      </div>
+      <button onclick="closeMonthly()" class="btn btn-s" style="padding:6px;border-radius:8px;width:28px;height:28px;flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="padding:20px 22px;">
+      <div id="monthly-grid" style="display:grid;grid-template-columns:1fr 1fr;gap:12px;"></div>
+    </div>
+    <div style="padding:14px 22px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:flex-end;gap:8px;">
+      <button class="btn btn-s" onclick="closeMonthly()">Close</button>
+    </div>
+  </div>
+</div>
+
 <script>
 var entries = {};
-var settings = {hourlyRate:35,overtimeRate:1.5,overtimeThreshold:40,defaultBreak:30,weekStart:1,jbKey:'',jbId:''};
+var settings = {hourlyRate:35,overtimeRate:1.5,overtimeThreshold:40,defaultBreak:30,weekStart:1,jbKey:'',jbId:'',reminderThreshold:8,remindersEnabled:true};
 var weekOffset = 0;
 var editState = {date:null,idx:null};
 var prevStats = {tot:0,ot:0,earn:0,worked:0};
@@ -474,6 +590,11 @@ function cH(s, e, b) {
   return Math.max(0, (ev - sv - b)/60);
 }
 function fc(v) { return '$'+v.toFixed(2).replace(/\B(?=(\d{3})+(?!\d))/g,','); }
+function esc(s){
+  return String(s == null ? '' : s).replace(/[&<>"']/g, function(c){
+    return {'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c];
+  });
+}
 function todayKey() { return gDK(new Date()); }
 function getDays() {
   var ws = gWS(new Date(), settings.weekStart);
@@ -673,8 +794,9 @@ function render(){
       var chip = e.hours > 8
         ? 'background:linear-gradient(135deg,rgba(251,146,60,.16),rgba(251,113,133,.14));color:#FDBA74;border:1px solid rgba(251,146,60,.32)'
         : 'background:linear-gradient(135deg,rgba(52,211,153,.14),rgba(34,211,238,.12));color:var(--emr-h);border:1px solid rgba(52,211,153,.3)';
+      var noteTag = e.note ? '<span class="entry-note" title="'+esc(e.note)+'">'+esc(e.note)+'</span>' : '';
       return '<div class="entry-row" onclick="openEdit(\''+key+'\','+idx+')">'+
-        '<span style="font-size:13px;font-weight:700;">'+fT(e.start)+' <span style="color:var(--dim);font-weight:500;">–</span> '+fT(e.end)+'</span>'+
+        '<span style="font-size:13px;font-weight:700;">'+fT(e.start)+' <span style="color:var(--dim);font-weight:500;">–</span> '+fT(e.end)+noteTag+'</span>'+
         '<span class="mono" style="font-size:11px;font-weight:700;padding:3px 9px;border-radius:99px;'+chip+'">'+e.hours.toFixed(2)+'h</span>'+
       '</div>';
     }).join('');
@@ -750,16 +872,191 @@ function addToday(){
   var s = document.getElementById('qa-start').value;
   var e = document.getElementById('qa-end').value;
   var b = parseInt(document.getElementById('qa-brk').value) || 0;
+  var note = (document.getElementById('qa-note').value || '').trim().slice(0,80);
   if (!s || !e){ toast('Enter start & end times','warning'); return; }
   var h = cH(s,e,b);
   var key = todayKey();
   if (!entries[key]) entries[key] = [];
-  entries[key].push({start:s, end:e, break:b, hours:h});
+  entries[key].push({start:s, end:e, break:b, hours:h, note:note});
   saveEntries();
   if (weekOffset !== 0) weekOffset = 0;
   render();
+  document.getElementById('qa-note').value = '';
   toast('Added to today!','success');
 }
+
+/* ---------- live clock in/out ---------- */
+var activeSession = null; // {startISO, startKey, startTimeStr}
+
+function loadActiveSession(){
+  try{
+    var raw = localStorage.getItem('tv_active');
+    if (raw) activeSession = JSON.parse(raw);
+  }catch(e){ activeSession = null; }
+}
+function saveActiveSession(){
+  try{
+    if (activeSession) localStorage.setItem('tv_active', JSON.stringify(activeSession));
+    else localStorage.removeItem('tv_active');
+  }catch(e){}
+}
+function pad2(n){ return String(n).padStart(2,'0'); }
+function hhmm(d){ return pad2(d.getHours())+':'+pad2(d.getMinutes()); }
+
+function toggleClock(){
+  if (activeSession) clockOut(); else clockIn();
+}
+function clockIn(){
+  var now = new Date();
+  activeSession = {
+    startISO: now.toISOString(),
+    startKey: gDK(now),
+    startTimeStr: hhmm(now),
+    reminderFired: false
+  };
+  saveActiveSession();
+  updateLiveUI();
+  if (settings.remindersEnabled !== false && 'Notification' in window && Notification.permission === 'default'){
+    Notification.requestPermission();
+  }
+  toast('Clocked in at '+fT(activeSession.startTimeStr),'success');
+}
+function clockOut(){
+  if (!activeSession) return;
+  var now = new Date();
+  var endStr = hhmm(now);
+  var brkEl = document.getElementById('live-brk');
+  var brk = parseInt(brkEl && brkEl.value) || 0;
+  var hours = cH(activeSession.startTimeStr, endStr, brk);
+  var key = activeSession.startKey;
+  if (!entries[key]) entries[key] = [];
+  entries[key].push({start: activeSession.startTimeStr, end: endStr, break: brk, hours: hours});
+  saveEntries();
+  activeSession = null;
+  saveActiveSession();
+  if (key === todayKey() && weekOffset !== 0) weekOffset = 0;
+  render();
+  updateLiveUI();
+  toast('Clocked out — '+hours.toFixed(2)+'h logged','success');
+}
+function updateLiveUI(){
+  var card = document.getElementById('live-card');
+  var status = document.getElementById('live-status');
+  var since = document.getElementById('live-since');
+  var brkWrap = document.getElementById('live-brk-wrap');
+  var btn = document.getElementById('live-btn');
+  if (activeSession){
+    card.classList.add('active');
+    status.textContent = 'Clocked In';
+    since.textContent = 'Since '+fT(activeSession.startTimeStr)+(activeSession.startKey !== todayKey() ? ' (prev. day)' : '');
+    since.classList.remove('hidden');
+    brkWrap.classList.remove('hidden');
+    btn.className = 'btn btn-d';
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="6" y="6" width="12" height="12" rx="2"/></svg> Clock Out';
+  } else {
+    card.classList.remove('active');
+    status.textContent = 'Not Clocked In';
+    since.classList.add('hidden');
+    brkWrap.classList.add('hidden');
+    btn.className = 'btn btn-g';
+    btn.innerHTML = '<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><circle cx="12" cy="12" r="9"/><polyline points="12 7 12 12 15.5 14"/></svg> Clock In';
+    document.getElementById('live-elapsed').textContent = '00:00:00';
+  }
+}
+function tickLiveElapsed(){
+  if (!activeSession) return;
+  var start = new Date(activeSession.startISO);
+  var diff = Math.max(0, Date.now() - start.getTime());
+  var totalSec = Math.floor(diff/1000);
+  var hh = Math.floor(totalSec/3600);
+  var mm = Math.floor((totalSec%3600)/60);
+  var ss = totalSec%60;
+  document.getElementById('live-elapsed').textContent = pad2(hh)+':'+pad2(mm)+':'+pad2(ss);
+  checkReminder(totalSec/3600);
+}
+function checkReminder(elapsedHours){
+  if (!activeSession || activeSession.reminderFired) return;
+  if (settings.remindersEnabled === false) return;
+  var threshold = settings.reminderThreshold || 8;
+  if (elapsedHours < threshold) return;
+  activeSession.reminderFired = true;
+  saveActiveSession();
+  var msg = 'You\'ve been clocked in for '+threshold+'+ hours — don\'t forget to clock out.';
+  if ('Notification' in window && Notification.permission === 'granted'){
+    try {
+      new Notification('TimeVault', { body: msg, icon: 'icons/time-icons_android_192x192.png' });
+    } catch(e){ toast(msg, 'warning'); }
+  } else {
+    toast(msg, 'warning');
+  }
+}
+
+/* ---------- monthly summary ---------- */
+var monthOffset = 0;
+
+function getMonthlyStats(refDate){
+  var year = refDate.getFullYear(), month = refDate.getMonth();
+  var monthStart = new Date(year, month, 1);
+  var monthEnd = new Date(year, month + 1, 0);
+  var totalHours = 0, daysWorked = 0, totalEarn = 0;
+
+  var wsCursor = gWS(monthStart, settings.weekStart);
+  while (wsCursor <= monthEnd){
+    var weekDays = [];
+    for (var i = 0; i < 7; i++){ var d = new Date(wsCursor); d.setDate(wsCursor.getDate()+i); weekDays.push(d); }
+
+    var running = 0; // cumulative hours so far this week, in day order (for correct OT threshold crossing)
+    weekDays.forEach(function(d){
+      var dh = daySum(gDK(d));
+      var inMonth = (d.getMonth() === month && d.getFullYear() === year);
+      if (dh > 0 && inMonth){
+        var before = running;
+        var after = running + dh;
+        var regPortion = Math.max(0, Math.min(after, settings.overtimeThreshold) - before);
+        regPortion = Math.max(0, Math.min(regPortion, dh));
+        var otPortion = dh - regPortion;
+        totalHours += dh;
+        daysWorked++;
+        totalEarn += regPortion*settings.hourlyRate + otPortion*settings.hourlyRate*settings.overtimeRate;
+      }
+      running += dh;
+    });
+
+    wsCursor = new Date(wsCursor); wsCursor.setDate(wsCursor.getDate()+7);
+  }
+  return {
+    hours: totalHours,
+    earn: totalEarn,
+    daysWorked: daysWorked,
+    avg: daysWorked > 0 ? totalHours/daysWorked : 0
+  };
+}
+function statBlock(label, value, c1, c2){
+  return '<div class="card" style="padding:16px;overflow:hidden;">'+
+    '<div style="position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,'+c1+','+c2+',transparent);"></div>'+
+    '<div class="eyebrow" style="margin-bottom:10px;">'+label+'</div>'+
+    '<div class="mono" style="font-size:22px;font-weight:700;letter-spacing:-.5px;background:linear-gradient(120deg,'+c1+','+c2+');-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent;">'+value+'</div>'+
+  '</div>';
+}
+function renderMonthly(){
+  var now = new Date();
+  var refDate = new Date(now.getFullYear(), now.getMonth() + monthOffset, 1);
+  var stats = getMonthlyStats(refDate);
+  document.getElementById('monthly-title').textContent = refDate.toLocaleDateString('en-US',{month:'long', year:'numeric'});
+  var grid = document.getElementById('monthly-grid');
+  grid.innerHTML =
+    statBlock('Total Hours', stats.hours.toFixed(1)+' hrs', '#8B5CF6', '#22D3EE') +
+    statBlock('Earnings', fc(stats.earn), '#34D399', '#22D3EE') +
+    statBlock('Days Worked', String(stats.daysWorked), '#60A5FA', '#A78BFA') +
+    statBlock('Avg Hours / Day', stats.avg.toFixed(1)+' hrs', '#FBBF24', '#FB923C');
+}
+function openMonthly(){
+  monthOffset = 0;
+  renderMonthly();
+  document.getElementById('monthly-modal').classList.remove('hidden');
+}
+function closeMonthly(){ document.getElementById('monthly-modal').classList.add('hidden'); }
+function changeMonth(d){ monthOffset += d; renderMonthly(); }
 
 /* ---------- edit modal ---------- */
 function openEdit(dateKey, idx){
@@ -774,6 +1071,7 @@ function openEdit(dateKey, idx){
   document.getElementById('e-start').value = ex ? ex.start : '09:00';
   document.getElementById('e-end').value = ex ? ex.end : '17:30';
   document.getElementById('e-brk').value = ex ? ex.break : settings.defaultBreak;
+  document.getElementById('e-note').value = ex ? (ex.note || '') : '';
   updateEditHrs();
   document.getElementById('del-btn').classList.toggle('hidden', isNew);
   document.getElementById('edit-modal').classList.remove('hidden');
@@ -794,7 +1092,8 @@ function saveEntry(){
   var e = document.getElementById('e-end').value;
   if (!s || !e){ toast('Enter start & end times','warning'); return; }
   var b = parseInt(document.getElementById('e-brk').value) || 0;
-  var entry = {start:s, end:e, break:b, hours:cH(s,e,b)};
+  var note = (document.getElementById('e-note').value || '').trim().slice(0,80);
+  var entry = {start:s, end:e, break:b, hours:cH(s,e,b), note:note};
   if (!entries[dateKey]) entries[dateKey] = [];
   var isNew = (idx === null || idx === undefined);
   if (!isNew){ entries[dateKey][idx] = entry; } else { entries[dateKey].push(entry); }
@@ -822,6 +1121,8 @@ function openSettings(){
   document.getElementById('s-othr').value = settings.overtimeThreshold;
   document.getElementById('s-brk').value = settings.defaultBreak;
   document.getElementById('s-wkst').value = String(settings.weekStart);
+  document.getElementById('s-remind-on').checked = settings.remindersEnabled !== false;
+  document.getElementById('s-remind-hrs').value = settings.reminderThreshold;
   document.getElementById('s-jbk').value = settings.jbKey || '';
   document.getElementById('s-jbid').value = settings.jbId || '';
   document.getElementById('sett-modal').classList.remove('hidden');
@@ -834,6 +1135,8 @@ function saveSettings(){
   settings.defaultBreak = parseInt(document.getElementById('s-brk').value) || 30;
   var w = parseInt(document.getElementById('s-wkst').value);
   settings.weekStart = isNaN(w) ? 1 : w;
+  settings.remindersEnabled = document.getElementById('s-remind-on').checked;
+  settings.reminderThreshold = parseFloat(document.getElementById('s-remind-hrs').value) || 8;
   settings.jbKey = document.getElementById('s-jbk').value.trim();
   settings.jbId = document.getElementById('s-jbid').value.trim();
   saveSettingsStore();
@@ -871,6 +1174,39 @@ function doPull(){
 }
 
 /* ---------- week actions ---------- */
+function copyLastWeek(){
+  var days = getDays(); // currently viewed week
+  var prevWs = gWS(new Date(), settings.weekStart);
+  prevWs.setDate(prevWs.getDate() + (weekOffset - 1) * 7);
+  var prevDays = [];
+  for (var i = 0; i < 7; i++){ var d = new Date(prevWs); d.setDate(prevWs.getDate()+i); prevDays.push(d); }
+
+  var hasSource = prevDays.some(function(d){ return (entries[gDK(d)]||[]).length > 0; });
+  if (!hasSource){ toast('No entries found in the previous week','warning'); return; }
+
+  var targetHasEntries = days.some(function(d){ return (entries[gDK(d)]||[]).length > 0; });
+  if (targetHasEntries){
+    if (!confirm('This week already has entries. Copy last week\'s schedule anyway? (added alongside existing entries, nothing will be deleted)')) return;
+  }
+
+  var copied = 0;
+  prevDays.forEach(function(d, idx){
+    var srcKey = gDK(d);
+    var src = entries[srcKey] || [];
+    if (src.length === 0) return;
+    var destKey = gDK(days[idx]);
+    if (!entries[destKey]) entries[destKey] = [];
+    src.forEach(function(e){
+      entries[destKey].push({start:e.start, end:e.end, break:e.break, hours:e.hours, note:e.note || ''});
+      copied++;
+    });
+  });
+
+  if (copied === 0){ toast('Nothing to copy','warning'); return; }
+  saveEntries();
+  render();
+  toast('Copied '+copied+' entr'+(copied===1?'y':'ies')+' from last week','success');
+}
 function clearWeek(){
   if (!confirm('Clear this entire week?')) return;
   getDays().forEach(function(d){ delete entries[gDK(d)]; });
@@ -879,10 +1215,11 @@ function clearWeek(){
   toast('Week cleared','info');
 }
 function doExport(){
-  var rows = ['Date,Start,End,Break,Hours'];
+  var rows = ['Date,Start,End,Break,Hours,Note'];
   Object.keys(entries).sort().forEach(function(d){
     entries[d].forEach(function(e){
-      rows.push(d+','+e.start+','+e.end+','+e.break+','+e.hours.toFixed(2));
+      var noteEsc = '"'+String(e.note || '').replace(/"/g,'""')+'"';
+      rows.push(d+','+e.start+','+e.end+','+e.break+','+e.hours.toFixed(2)+','+noteEsc);
     });
   });
   var blob = new Blob([rows.join('\n')],{type:'text/csv'});
@@ -898,6 +1235,7 @@ function tickClock(){
   var n = new Date();
   document.getElementById('clock-time').textContent =
     String(n.getHours()).padStart(2,'0')+':'+String(n.getMinutes()).padStart(2,'0')+':'+String(n.getSeconds()).padStart(2,'0');
+  tickLiveElapsed();
 }
 
 /* ---------- listeners & boot ---------- */
@@ -909,13 +1247,27 @@ document.getElementById('e-end').addEventListener('input', updateEditHrs);
 document.getElementById('e-brk').addEventListener('input', updateEditHrs);
 document.getElementById('edit-modal').addEventListener('click', function(ev){ if (ev.target === this) closeEdit(); });
 document.getElementById('sett-modal').addEventListener('click', function(ev){ if (ev.target === this) closeSett(); });
-document.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ closeEdit(); closeSett(); } });
+document.getElementById('monthly-modal').addEventListener('click', function(ev){ if (ev.target === this) closeMonthly(); });
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ closeEdit(); closeSett(); closeMonthly(); } });
 
 loadData();
+loadActiveSession();
 setSyncState((settings.jbKey && settings.jbId) ? 'linked' : 'offline');
 render();
+updateLiveUI();
 tickClock();
 setInterval(tickClock, 1000);
+
+/* ---------- service worker registration ---------- */
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', function () {
+    navigator.serviceWorker.register('./sw.js').then(function (reg) {
+      console.log('TimeVault: Service worker registered', reg.scope);
+    }).catch(function (err) {
+      console.warn('TimeVault: Service worker registration failed', err);
+    });
+  });
+}
 </script>
 </body>
 </html>

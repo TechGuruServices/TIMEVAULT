@@ -3,27 +3,42 @@
  * Provides offline functionality and caching for the PWA
  */
 
-const CACHE_NAME = 'timevault-v2.0';
+const CACHE_NAME = 'timevault-v2.1';
 const OFFLINE_URL = 'index.html';
 
+// Local, same-origin assets only — safe for cache.addAll (a single failed
+// request fails the whole addAll call). Cross-origin assets (webfonts,
+// jsonbin) are handled by the network-first/runtime-cache logic below instead,
+// since addAll can't tolerate opaque/CORS failures on install.
 const CACHE_ASSETS = [
   './',
   './index.html',
-  './styles.css',
-  './apps.js',
   './manifest.json',
-  './icons/time-icons_favicon_96x96.png',
-  './icons/time-icons_favicon_64x64.png',
-  './icons/time-icons_favicon_48x48.png',
-  './icons/time-icons_favicon_32x32.png',
-  './icons/time-icons_favicon_16x16.png',
+  './browserconfig.xml',
   './icons/time-icons_favicon.ico',
+  './icons/time-icons_favicon_16x16.png',
+  './icons/time-icons_favicon_32x32.png',
+  './icons/time-icons_favicon_48x48.png',
+  './icons/time-icons_favicon_64x64.png',
+  './icons/time-icons_favicon_96x96.png',
+  './icons/time-icons_logo.png',
+  './icons/time-icons_apple_57x57.png',
+  './icons/time-icons_apple_60x60.png',
+  './icons/time-icons_apple_68x68.png',
+  './icons/time-icons_apple_72x72.png',
+  './icons/time-icons_apple_76x76.png',
+  './icons/time-icons_apple_114x114.png',
+  './icons/time-icons_apple_120x120.png',
+  './icons/time-icons_apple_144x144.png',
+  './icons/time-icons_apple_152x152.png',
+  './icons/time-icons_apple_167x167.png',
+  './icons/time-icons_apple_180x180.png',
   './icons/time-icons_android_192x192.png',
   './icons/time-icons_android_512x512.png',
-  './icons/time-icons_apple_180x180.png',
-  'https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap',
-  'https://cdn.jsdelivr.net/npm/chart.js@3.9.1/dist/chart.min.js',
-  'https://cdn.jsdelivr.net/particles.js/2.0.0/particles.min.js'
+  './icons/time-icons_mstile_70x70.png',
+  './icons/time-icons_mstile_144x144.png',
+  './icons/time-icons_mstile_150x150.png',
+  './icons/time-icons_mstile_310x310.png'
 ];
 
 // Install event - cache assets
@@ -83,7 +98,7 @@ self.addEventListener('fetch', (event) => {
     return;
   }
 
-  // Network-first strategy for external resources
+  // Network-first strategy for external resources (webfonts, jsonbin sync, etc.)
   if (!event.request.url.startsWith(self.location.origin)) {
     event.respondWith(
       fetch(event.request)
