@@ -2,16 +2,19 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover, maximum-scale=5.0">
 <title>TimeVault — Work Hours Tracker</title>
 <meta name="description" content="TimeVault — a premium work hours tracker with live clock in/out, payroll calculations, and weekly summaries.">
 <meta name="theme-color" content="#06070D">
+<meta name="color-scheme" content="dark">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
 <meta name="apple-mobile-web-app-title" content="TimeVault">
 <meta name="msapplication-config" content="browserconfig.xml">
 <meta name="msapplication-TileColor" content="#3d7eff">
+<meta name="format-detection" content="telephone=no,date=no,address=no,email=no">
+<meta name="HandheldFriendly" content="true">
 
 <!-- Favicon / taskbar icon -->
 <link rel="icon" type="image/x-icon" href="icons/time-icons_favicon.ico">
@@ -48,13 +51,21 @@
 <link href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@latest/500.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@latest/600.css" rel="stylesheet">
 <link href="https://cdn.jsdelivr.net/npm/@fontsource/ibm-plex-mono@latest/700.css" rel="stylesheet">
+
+<!-- PDF timecard export engine (loaded from CDN; export/share features degrade gracefully if offline) -->
+<script src="https://cdn.jsdelivr.net/npm/jspdf@2.5.1/dist/jspdf.umd.min.js" defer></script>
+<script src="https://cdn.jsdelivr.net/npm/jspdf-autotable@3.8.2/dist/jspdf.plugin.autotable.min.js" defer></script>
 <style>
-*{box-sizing:border-box;margin:0;padding:0}
-html,body{overflow-x:hidden}
+*{box-sizing:border-box;margin:0;padding:0;-webkit-tap-highlight-color:transparent}
+html,body{overflow-x:hidden;height:100%}
+html{-webkit-text-size-adjust:100%;text-size-adjust:100%}
 body{
   font-family:'Manrope',-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
-  background:#06070D;color:#F2F1FA;min-height:100vh;-webkit-font-smoothing:antialiased;
+  background:#06070D;color:#F2F1FA;min-height:100vh;min-height:100dvh;-webkit-font-smoothing:antialiased;
+  padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right);
 }
+button,a,.nav-btn,.day-add,.btn,input,select,textarea,.entry-row,.sync-badge{touch-action:manipulation}
+input,select,textarea{-webkit-user-select:text;user-select:text}
 ::selection{background:rgba(139,92,246,.45);color:#fff}
 ::-webkit-scrollbar{width:5px;height:5px}
 ::-webkit-scrollbar-track{background:transparent}
@@ -107,7 +118,7 @@ body::before{content:'';position:fixed;top:0;left:0;right:0;height:2px;z-index:6
   -webkit-text-fill-color:transparent;color:transparent;animation:gradflow 8s linear infinite;}
 @keyframes gradflow{to{background-position:240% center}}
 
-.app{max-width:1020px;margin:0 auto;padding:0 20px 40px;position:relative;z-index:1}
+.app{max-width:1020px;margin:0 auto;padding:0 20px calc(40px + env(safe-area-inset-bottom));position:relative;z-index:1}
 
 /* motion */
 @keyframes up{from{opacity:0;transform:translateY(18px)}to{opacity:1;transform:translateY(0)}}
@@ -205,16 +216,17 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
 /* modal */
 .mo-overlay{position:fixed;inset:0;background:rgba(4,5,10,.72);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);
   display:flex;align-items:center;justify-content:center;z-index:9999;padding:16px;animation:fade .25s both;}
-.mo-box{width:100%;max-width:480px;max-height:88vh;overflow-y:auto;position:relative;
+.mo-box{width:100%;max-width:480px;max-height:88vh;max-height:88dvh;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;position:relative;
   background:linear-gradient(165deg,rgba(27,30,50,.94),rgba(13,15,27,.96));
   border:1px solid rgba(255,255,255,.11);border-radius:20px;
   box-shadow:0 40px 100px rgba(0,0,0,.65),0 0 60px -20px rgba(139,92,246,.35);
   animation:pop .42s cubic-bezier(.16,1,.3,1) both;}
+.mo-box.mo-wide{max-width:640px}
 .mo-box::before{content:'';position:absolute;top:0;left:26px;right:26px;height:2px;
   background:linear-gradient(90deg,transparent,#8B5CF6,#22D3EE,transparent);opacity:.9}
 
 /* toast */
-.toast-box{position:fixed;bottom:20px;right:20px;z-index:99999;display:flex;flex-direction:column;gap:8px;max-width:330px}
+.toast-box{position:fixed;bottom:calc(20px + env(safe-area-inset-bottom));right:calc(20px + env(safe-area-inset-right));z-index:99999;display:flex;flex-direction:column;gap:8px;max-width:min(330px,calc(100vw - 40px))}
 .toast{position:relative;overflow:hidden;background:rgba(18,20,34,.92);backdrop-filter:blur(12px);
   border:1px solid rgba(255,255,255,.1);border-radius:13px;padding:12px 16px 12px 19px;
   display:flex;align-items:center;gap:10px;box-shadow:0 16px 44px rgba(0,0,0,.55),0 0 30px -12px rgba(139,92,246,.3);
@@ -229,6 +241,25 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
   box-shadow:0 0 18px -4px rgba(139,92,246,.5);}
 
 .hidden{display:none!important}
+
+/* export modal */
+.exp-seg{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin-bottom:16px}
+.exp-seg-btn{padding:10px 8px;border-radius:10px;border:1px solid var(--line);background:rgba(255,255,255,.03);
+  color:var(--mut);font-size:12px;font-weight:700;cursor:pointer;transition:all .22s;font-family:'Manrope',sans-serif;text-align:center;}
+.exp-seg-btn:hover{border-color:rgba(139,92,246,.5);color:var(--txt)}
+.exp-seg-btn.active{color:#fff;border-color:transparent;background:linear-gradient(120deg,#7C3AED,#D946EF 60%,#06B6D4);
+  box-shadow:0 6px 18px -6px rgba(139,92,246,.6),inset 0 1px 0 rgba(255,255,255,.25);}
+.exp-grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.exp-summary{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin:16px 0;
+  background:linear-gradient(135deg,rgba(139,92,246,.08),rgba(34,211,238,.05));
+  border:1px solid rgba(139,92,246,.22);border-radius:14px;padding:14px;}
+.exp-summary .es-item{text-align:center;min-width:0}
+.exp-summary .es-lbl{font-size:9px;font-weight:800;letter-spacing:.5px;text-transform:uppercase;color:var(--dim);margin-bottom:5px;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}
+.exp-summary .es-val{font-size:16px;font-weight:700;letter-spacing:-.3px}
+.exp-actions{display:flex;flex-direction:column;gap:8px}
+.exp-actions .btn{width:100%;padding:13px;border-radius:11px;font-size:13px}
+.exp-status{font-size:11px;color:var(--dim);text-align:center;margin-top:2px;min-height:14px;font-weight:600}
+@media(max-width:480px){.exp-summary{grid-template-columns:1fr 1fr}}
 
 /* live clock widget */
 .live-card{position:relative;overflow:hidden;padding:18px 20px;margin-bottom:20px;
@@ -299,6 +330,29 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
 @media(max-width:420px){.stat-grid{grid-template-columns:1fr!important}}
 @media (prefers-reduced-motion: reduce){
   *,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important;}
+}
+
+/* iOS Safari zooms the viewport when a focused input has font-size < 16px — keep
+   inputs at 16px on touch-sized viewports so pinch-zoom never gets triggered. */
+@media(max-width:640px){
+  .inp,select.inp,textarea.inp{font-size:16px}
+  .live-brk .inp{font-size:15px}
+}
+@media(max-width:480px){
+  .app{padding-left:16px;padding-right:16px}
+  .wordmark{font-size:20px}
+  header{padding-top:22px!important}
+  .mo-box{border-radius:16px}
+  .mo-box .exp-grid2{grid-template-columns:1fr!important}
+  .exp-seg{grid-template-columns:1fr!important}
+}
+@media(max-width:360px){
+  .clock{display:none}
+}
+/* Landscape phones: modal shouldn't clip under the on-screen keyboard/notch */
+@media(max-height:480px) and (orientation:landscape){
+  .mo-overlay{align-items:flex-start;padding-top:calc(14px + env(safe-area-inset-top))}
+  .mo-box{max-height:none}
 }
 </style>
 </head>
@@ -385,6 +439,10 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
       <button class="btn btn-s" onclick="copyLastWeek()" style="padding:8px 13px;border-radius:10px;font-size:12px;">Copy Last Week</button>
       <button class="btn btn-d" onclick="clearWeek()" style="padding:8px 13px;border-radius:10px;font-size:12px;">Clear Week</button>
       <button class="btn btn-s" onclick="doExport()" style="padding:8px 13px;border-radius:10px;font-size:12px;">Export CSV</button>
+      <button class="btn btn-p" onclick="openExport()" style="padding:8px 13px;border-radius:10px;font-size:12px;">
+        <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="12" y1="18" x2="12" y2="12"/><polyline points="9 15 12 12 15 15"/></svg>
+        Timecard PDF
+      </button>
     </div>
   </div>
 
@@ -556,14 +614,75 @@ button:focus-visible,.inp:focus-visible,.nav-btn:focus-visible,[tabindex]:focus-
     </div>
     <div style="padding:14px 22px;border-top:1px solid rgba(255,255,255,.06);display:flex;justify-content:flex-end;gap:8px;">
       <button class="btn btn-s" onclick="closeMonthly()">Close</button>
+      <button class="btn btn-p" onclick="openExportFromMonthly()">Export Timecard PDF</button>
+    </div>
+  </div>
+</div>
+
+<!-- EXPORT / TIMECARD PDF MODAL -->
+<div id="export-modal" class="mo-overlay hidden">
+  <div class="mo-box mo-wide">
+    <div style="padding:20px 22px 16px;border-bottom:1px solid rgba(255,255,255,.06);display:flex;align-items:flex-start;justify-content:space-between;">
+      <div>
+        <div class="disp" style="font-weight:700;font-size:19px;letter-spacing:-.4px;">Export Timecard</div>
+        <div style="font-size:12px;color:var(--dim);margin-top:3px;font-weight:600;">PDF ready for payroll — includes dates, clock in/out, breaks, rate & totals</div>
+      </div>
+      <button onclick="closeExport()" class="btn btn-s" style="padding:6px;border-radius:8px;width:28px;height:28px;flex-shrink:0;">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg>
+      </button>
+    </div>
+    <div style="padding:20px 22px;">
+      <label class="lbl">Period</label>
+      <div class="exp-seg">
+        <button type="button" class="exp-seg-btn" id="exp-seg-week" onclick="setExportRange('week')">This Week</button>
+        <button type="button" class="exp-seg-btn" id="exp-seg-month" onclick="setExportRange('month')">This Month</button>
+        <button type="button" class="exp-seg-btn" id="exp-seg-custom" onclick="setExportRange('custom')">Custom Range</button>
+      </div>
+
+      <div id="exp-custom-wrap" class="exp-grid2 hidden" style="margin-bottom:16px;">
+        <div><label class="lbl">Start Date</label><input class="inp" type="date" id="exp-c-start" onchange="updateExportPreview()"></div>
+        <div><label class="lbl">End Date</label><input class="inp" type="date" id="exp-c-end" onchange="updateExportPreview()"></div>
+      </div>
+
+      <div class="exp-grid2" style="margin-bottom:12px;">
+        <div><label class="lbl" for="exp-emp-name">Employee Name</label><input class="inp" type="text" id="exp-emp-name" maxlength="60" placeholder="Jane Doe"></div>
+        <div><label class="lbl" for="exp-employer">Employer / Company</label><input class="inp" type="text" id="exp-employer" maxlength="60" placeholder="Acme Inc."></div>
+      </div>
+      <div class="exp-grid2" style="margin-bottom:4px;">
+        <div><label class="lbl" for="exp-emp-id">Employee ID / Position</label><input class="inp" type="text" id="exp-emp-id" maxlength="60" placeholder="Optional"></div>
+        <div><label class="lbl" for="exp-notes">Note on Timecard</label><input class="inp" type="text" id="exp-notes" maxlength="80" placeholder="Optional, e.g. Submitted for approval"></div>
+      </div>
+
+      <div id="exp-period-label" class="mono" style="font-size:11px;color:var(--dim);font-weight:600;margin-top:10px;"></div>
+
+      <div class="exp-summary" id="exp-summary">
+        <div class="es-item"><div class="es-lbl">Regular</div><div class="es-val" id="es-reg" style="color:var(--cyn-h)">0.0h</div></div>
+        <div class="es-item"><div class="es-lbl">Overtime</div><div class="es-val" id="es-ot" style="color:#FCA35D">0.0h</div></div>
+        <div class="es-item"><div class="es-lbl">Total Hours</div><div class="es-val" id="es-tot">0.0h</div></div>
+        <div class="es-item"><div class="es-lbl">Gross Pay</div><div class="es-val" id="es-pay" style="color:var(--emr-h)">$0.00</div></div>
+      </div>
+
+      <div class="exp-actions">
+        <button class="btn btn-p" id="exp-share-btn" onclick="shareTimecard()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="#fff" stroke-width="2.5"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><line x1="8.6" y1="10.5" x2="15.4" y2="6.5"/><line x1="8.6" y1="13.5" x2="15.4" y2="17.5"/></svg>
+          Share PDF (SMS / Email / More)
+        </button>
+        <button class="btn btn-s" id="exp-download-btn" onclick="downloadTimecard()">
+          <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><path d="M12 3v12"/><polyline points="7 10 12 15 17 10"/><path d="M5 21h14"/></svg>
+          Download PDF
+        </button>
+        <div class="exp-status" id="exp-status"></div>
+      </div>
     </div>
   </div>
 </div>
 
 <script>
 var entries = {};
-var settings = {hourlyRate:35,overtimeRate:1.5,overtimeThreshold:40,defaultBreak:30,weekStart:1,jbKey:'',jbId:'',reminderThreshold:8,remindersEnabled:true};
+var settings = {hourlyRate:35,overtimeRate:1.5,overtimeThreshold:40,defaultBreak:30,weekStart:1,jbKey:'',jbId:'',reminderThreshold:8,remindersEnabled:true,employeeName:'',employerName:'',employeeId:''};
 var weekOffset = 0;
+var exportState = {range:'week', customStart:null, customEnd:null};
+var lastTimecard = null; // {blob, filename} cache from the most recent Generate
 var editState = {date:null,idx:null};
 var prevStats = {tot:0,ot:0,earn:0,worked:0};
 var syncTimer = null;
@@ -701,6 +820,46 @@ function getStats(days){
   var reg = tot - ot;
   var earn = reg*settings.hourlyRate + ot*settings.hourlyRate*settings.overtimeRate;
   return {tot:tot, ot:ot, reg:reg, earn:earn, worked:worked};
+}
+
+/* ---------- generalized date-range stats (used by PDF timecard export) ----------
+   Overtime is calculated per calendar week (aligned to settings.weekStart), the same
+   way getMonthlyStats() does it, so a custom or monthly range still correctly detects
+   an OT threshold crossing even if the week spans outside the selected range. */
+function getRangeStats(rangeStart, rangeEnd){
+  rangeStart = new Date(rangeStart); rangeStart.setHours(0,0,0,0);
+  rangeEnd = new Date(rangeEnd); rangeEnd.setHours(0,0,0,0);
+  var dayRows = [];
+  var totalHours = 0, totalReg = 0, totalOT = 0, totalEarn = 0, daysWorked = 0;
+  if (rangeEnd < rangeStart) return {totalHours:0,totalReg:0,totalOT:0,totalEarn:0,daysWorked:0,dayRows:[],rangeStart:rangeStart,rangeEnd:rangeEnd};
+
+  var wsCursor = gWS(rangeStart, settings.weekStart);
+  while (wsCursor <= rangeEnd){
+    var weekDays = [];
+    for (var i = 0; i < 7; i++){ var d = new Date(wsCursor); d.setDate(wsCursor.getDate()+i); weekDays.push(d); }
+    var running = 0;
+    weekDays.forEach(function(d){
+      var dh = daySum(gDK(d));
+      var inRange = (d >= rangeStart && d <= rangeEnd);
+      var before = running, after = running + dh;
+      var regPortion = 0, otPortion = 0;
+      if (dh > 0 && inRange){
+        regPortion = Math.max(0, Math.min(after, settings.overtimeThreshold) - before);
+        regPortion = Math.max(0, Math.min(regPortion, dh));
+        otPortion = dh - regPortion;
+        totalHours += dh; totalReg += regPortion; totalOT += otPortion;
+        totalEarn += regPortion*settings.hourlyRate + otPortion*settings.hourlyRate*settings.overtimeRate;
+        daysWorked++;
+      }
+      if (inRange){
+        dayRows.push({date:new Date(d), key:gDK(d), entries:(entries[gDK(d)]||[]).slice(), dayTotal:dh, reg:regPortion, ot:otPortion});
+      }
+      running += dh;
+    });
+    wsCursor = new Date(wsCursor); wsCursor.setDate(wsCursor.getDate()+7);
+  }
+  dayRows.sort(function(a,b){ return a.date - b.date; });
+  return {totalHours:totalHours, totalReg:totalReg, totalOT:totalOT, totalEarn:totalEarn, daysWorked:daysWorked, dayRows:dayRows, rangeStart:rangeStart, rangeEnd:rangeEnd};
 }
 
 /* ---------- gauges & count-up ---------- */
@@ -1230,6 +1389,306 @@ function doExport(){
   toast('Exported!','success');
 }
 
+/* ---------- PDF timecard export ---------- */
+function hexRgb(hex){
+  var h = hex.replace('#','');
+  var n = parseInt(h,16);
+  return [(n>>16)&255,(n>>8)&255,n&255];
+}
+function fT12(t){ return t ? fT(t) : '—'; }
+function monthRefFromOffset(off){
+  var now = new Date();
+  return new Date(now.getFullYear(), now.getMonth() + (off||0), 1);
+}
+function openExport(fromMonthly){
+  document.getElementById('exp-emp-name').value = settings.employeeName || '';
+  document.getElementById('exp-employer').value = settings.employerName || '';
+  document.getElementById('exp-emp-id').value = settings.employeeId || '';
+  document.getElementById('exp-notes').value = '';
+  document.getElementById('exp-status').textContent = '';
+  if (!fromMonthly) exportState.monthRefDate = monthRefFromOffset(0);
+  document.getElementById('export-modal').classList.remove('hidden');
+  setExportRange(fromMonthly ? 'month' : (exportState.range || 'week'));
+}
+function openExportFromMonthly(){
+  exportState.monthRefDate = monthRefFromOffset(monthOffset);
+  closeMonthly();
+  openExport(true);
+}
+function closeExport(){ document.getElementById('export-modal').classList.add('hidden'); }
+function setExportRange(type){
+  exportState.range = type;
+  ['week','month','custom'].forEach(function(t){
+    document.getElementById('exp-seg-'+t).classList.toggle('active', t === type);
+  });
+  document.getElementById('exp-custom-wrap').classList.toggle('hidden', type !== 'custom');
+  if (type === 'custom'){
+    var sEl = document.getElementById('exp-c-start'), eEl = document.getElementById('exp-c-end');
+    if (!sEl.value || !eEl.value){
+      var days = getDays();
+      sEl.value = gDK(days[0]);
+      eEl.value = gDK(days[6]);
+    }
+  }
+  updateExportPreview();
+}
+function getExportDates(){
+  if (exportState.range === 'month'){
+    var ref = exportState.monthRefDate || monthRefFromOffset(0);
+    var start = new Date(ref.getFullYear(), ref.getMonth(), 1);
+    var end = new Date(ref.getFullYear(), ref.getMonth()+1, 0);
+    return {start:start, end:end, label:ref.toLocaleDateString('en-US',{month:'long',year:'numeric'})};
+  }
+  if (exportState.range === 'custom'){
+    var sv = document.getElementById('exp-c-start').value;
+    var ev = document.getElementById('exp-c-end').value;
+    if (sv && ev){
+      var s = new Date(sv+'T12:00:00'), e = new Date(ev+'T12:00:00');
+      if (e < s){ var t = s; s = e; e = t; }
+      return {start:s, end:e, label:s.toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+e.toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
+    }
+  }
+  // default / 'week'
+  var days = getDays();
+  return {start:days[0], end:days[6], label:days[0].toLocaleDateString('en-US',{month:'short',day:'numeric'})+' – '+days[6].toLocaleDateString('en-US',{month:'short',day:'numeric',year:'numeric'})};
+}
+function updateExportPreview(){
+  var range = getExportDates();
+  var stats = getRangeStats(range.start, range.end);
+  document.getElementById('exp-period-label').textContent = 'Pay period: ' + range.label;
+  document.getElementById('es-reg').textContent = stats.totalReg.toFixed(1)+'h';
+  document.getElementById('es-ot').textContent = stats.totalOT.toFixed(1)+'h';
+  document.getElementById('es-tot').textContent = stats.totalHours.toFixed(1)+'h';
+  document.getElementById('es-pay').textContent = fc(stats.totalEarn);
+}
+
+function buildTimecardDoc(){
+  var empName = document.getElementById('exp-emp-name').value.trim();
+  var employer = document.getElementById('exp-employer').value.trim();
+  var empId = document.getElementById('exp-emp-id').value.trim();
+  var note = document.getElementById('exp-notes').value.trim();
+  settings.employeeName = empName; settings.employerName = employer; settings.employeeId = empId;
+  saveSettingsStore();
+
+  if (!window.jspdf || !window.jspdf.jsPDF){
+    toast('PDF engine still loading — check your connection and try again','warning');
+    return null;
+  }
+
+  var range = getExportDates();
+  var stats = getRangeStats(range.start, range.end);
+
+  var jsPDFCtor = window.jspdf.jsPDF;
+  var doc = new jsPDFCtor({unit:'pt', format:'letter'});
+  var pageW = doc.internal.pageSize.getWidth();
+  var pageH = doc.internal.pageSize.getHeight();
+  var margin = 40;
+
+  var VIO = hexRgb('#7C3AED'), CYN = hexRgb('#22D3EE'), PNK = hexRgb('#D946EF'),
+      AMB = hexRgb('#F59E0B'), EMR = hexRgb('#059669'), NAVY = [11,13,26],
+      LAV = hexRgb('#A78BFA'), SKY = hexRgb('#67E8F9'), DIM = [130,130,145], INK = [28,28,38];
+
+  function stripe(y0,h){
+    var cols = ['#8B5CF6','#22D3EE','#F472B6','#FBBF24'];
+    var segW = pageW/cols.length;
+    cols.forEach(function(c,i){
+      var rgb = hexRgb(c);
+      doc.setFillColor(rgb[0],rgb[1],rgb[2]);
+      doc.rect(i*segW, y0, segW+1, h, 'F');
+    });
+  }
+
+  /* ---- header band ---- */
+  stripe(0,4);
+  doc.setFillColor(NAVY[0],NAVY[1],NAVY[2]);
+  doc.rect(0,4,pageW,80,'F');
+  doc.setFont('helvetica','bold'); doc.setFontSize(21); doc.setTextColor(255,255,255);
+  doc.text('TimeVault', margin, 40);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(LAV[0],LAV[1],LAV[2]);
+  doc.text('WORK HOURS TRACKER', margin, 54);
+
+  doc.setFont('helvetica','bold'); doc.setFontSize(15); doc.setTextColor(255,255,255);
+  doc.text('TIME CARD', pageW-margin, 40, {align:'right'});
+  doc.setFont('helvetica','normal'); doc.setFontSize(9.5); doc.setTextColor(SKY[0],SKY[1],SKY[2]);
+  doc.text(range.label, pageW-margin, 55, {align:'right'});
+
+  var y = 84+28;
+
+  /* ---- employee info grid ---- */
+  var colGap = 20, colW = (pageW-margin*2-colGap)/2, leftX = margin, rightX = margin+colW+colGap;
+  function info(label, val, x, yy){
+    doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(DIM[0],DIM[1],DIM[2]);
+    doc.text(label.toUpperCase(), x, yy);
+    doc.setFont('helvetica','normal'); doc.setFontSize(11); doc.setTextColor(INK[0],INK[1],INK[2]);
+    doc.text(val || '—', x, yy+14);
+  }
+  info('Employee Name', empName, leftX, y);
+  info('Employer / Company', employer, rightX, y);
+  y += 32;
+  info('Employee ID / Position', empId, leftX, y);
+  info('Pay Period', range.label, rightX, y);
+  y += 32;
+  info('Hourly Rate', '$'+settings.hourlyRate.toFixed(2)+' / hr', leftX, y);
+  info('Overtime Rate', '$'+(settings.hourlyRate*settings.overtimeRate).toFixed(2)+' / hr  ('+settings.overtimeRate+'x after '+settings.overtimeThreshold+'h/wk)', rightX, y);
+  y += 22;
+  if (note){
+    doc.setFont('helvetica','italic'); doc.setFontSize(9); doc.setTextColor(90,90,105);
+    doc.text(note, leftX, y, {maxWidth: pageW-margin*2});
+    y += 16;
+  }
+
+  doc.setDrawColor(VIO[0],VIO[1],VIO[2]); doc.setLineWidth(1);
+  doc.line(margin, y, pageW-margin, y);
+  y += 16;
+
+  /* ---- daily entries table ---- */
+  var body = [];
+  stats.dayRows.forEach(function(row){
+    var ents = row.entries;
+    var wkdy = row.date.toLocaleDateString('en-US',{weekday:'short'});
+    var dstr = row.date.toLocaleDateString('en-US',{month:'short',day:'numeric'});
+    if (!ents.length){
+      body.push([dstr, wkdy, '—', '—', '—', {content:'0.00', styles:{textColor:[170,170,182]}}, '']);
+      return;
+    }
+    ents.forEach(function(e, idx){
+      body.push([
+        idx===0 ? dstr : '',
+        idx===0 ? wkdy : '',
+        fT12(e.start), fT12(e.end),
+        (e.break||0)+' min',
+        e.hours.toFixed(2),
+        e.note || ''
+      ]);
+    });
+    if (ents.length > 1){
+      body.push([
+        '', '', '', '',
+        {content:'Day Total', styles:{fontStyle:'bold', halign:'right', textColor:INK}},
+        {content:row.dayTotal.toFixed(2), styles:{fontStyle:'bold', textColor:INK}},
+        ''
+      ]);
+    }
+  });
+
+  doc.autoTable({
+    startY: y,
+    margin: {left:margin, right:margin, bottom:56},
+    head: [['Date','Day','Time In','Time Out','Break','Hours','Note']],
+    body: body,
+    styles: {font:'helvetica', fontSize:8.5, cellPadding:5.5, textColor:INK, lineColor:[228,228,238], lineWidth:0.5, overflow:'linebreak'},
+    headStyles: {fillColor:VIO, textColor:[255,255,255], fontStyle:'bold', fontSize:8.5, halign:'left'},
+    alternateRowStyles: {fillColor:[247,246,252]},
+    columnStyles: {
+      0:{cellWidth:56}, 1:{cellWidth:38}, 2:{cellWidth:58}, 3:{cellWidth:58},
+      4:{cellWidth:44}, 5:{cellWidth:46, halign:'right'}, 6:{cellWidth:'auto'}
+    }
+  });
+
+  var afterY = doc.lastAutoTable.finalY + 22;
+  var pageBottom = pageH - 56;
+  if (afterY + 176 > pageBottom){ doc.addPage(); afterY = 50; }
+
+  /* ---- summary box ---- */
+  var boxH = 92;
+  doc.setFillColor(247,246,252);
+  doc.setDrawColor(VIO[0],VIO[1],VIO[2]); doc.setLineWidth(1);
+  doc.roundedRect(margin, afterY, pageW-margin*2, boxH, 7, 7, 'FD');
+  var qW = (pageW-margin*2-40)/4, sx = margin+20, sy = afterY+30;
+  function sum(label,val,x,color){
+    doc.setFont('helvetica','bold'); doc.setFontSize(7.5); doc.setTextColor(DIM[0],DIM[1],DIM[2]);
+    doc.text(label.toUpperCase(), x, sy);
+    doc.setFont('helvetica','bold'); doc.setFontSize(14.5); doc.setTextColor(color[0],color[1],color[2]);
+    doc.text(val, x, sy+18);
+  }
+  sum('Regular Hours', stats.totalReg.toFixed(2)+' h', sx, [14,116,144]);
+  sum('Overtime Hours', stats.totalOT.toFixed(2)+' h', sx+qW, [180,83,9]);
+  sum('Total Hours', stats.totalHours.toFixed(2)+' h', sx+qW*2, INK);
+  sum('Gross Pay', fc(stats.totalEarn), sx+qW*3, EMR);
+
+  doc.setDrawColor(226,226,236); doc.setLineWidth(0.5);
+  doc.line(sx, afterY+50, pageW-margin-20, afterY+50);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8.5); doc.setTextColor(105,105,120);
+  doc.text('Regular Pay: '+fc(stats.totalReg*settings.hourlyRate)+'    •    Overtime Pay: '+fc(stats.totalOT*settings.hourlyRate*settings.overtimeRate)+'    •    Days Worked: '+stats.daysWorked,
+    sx, afterY+66);
+
+  var sigY = afterY+boxH+46;
+  if (sigY+40 > pageBottom){ doc.addPage(); sigY = 70; }
+  doc.setDrawColor(70,70,85); doc.setLineWidth(0.75);
+  doc.line(margin, sigY, margin+220, sigY);
+  doc.line(margin+270, sigY, margin+420, sigY);
+  doc.setFont('helvetica','normal'); doc.setFontSize(8); doc.setTextColor(120,120,135);
+  doc.text('Employee Signature', margin, sigY+12);
+  doc.text('Date', margin+270, sigY+12);
+  sigY += 46;
+  doc.line(margin, sigY, margin+220, sigY);
+  doc.line(margin+270, sigY, margin+420, sigY);
+  doc.text('Supervisor / Manager Signature', margin, sigY+12);
+  doc.text('Date', margin+270, sigY+12);
+
+  /* footer + page numbers on every page, added last once the total page count is known */
+  var totalPages = doc.internal.getNumberOfPages();
+  var genStamp = 'Generated by TimeVault • ' + new Date().toLocaleString('en-US');
+  for (var p = 1; p <= totalPages; p++){
+    doc.setPage(p);
+    doc.setDrawColor(230,230,238); doc.setLineWidth(0.75);
+    doc.line(margin, pageH-40, pageW-margin, pageH-40);
+    doc.setFont('helvetica','normal'); doc.setFontSize(7.5); doc.setTextColor(150,150,164);
+    doc.text(genStamp, margin, pageH-27);
+    doc.text('Page '+p+' of '+totalPages, pageW-margin, pageH-27, {align:'right'});
+  }
+
+  var fname = 'timevault-timecard-' + gDK(range.start) + '-to-' + gDK(range.end) + '.pdf';
+  return {doc:doc, filename:fname, label:range.label};
+}
+
+function downloadTimecard(){
+  var statusEl = document.getElementById('exp-status');
+  statusEl.textContent = 'Preparing PDF…';
+  setTimeout(function(){
+    var res = buildTimecardDoc();
+    if (!res){ statusEl.textContent = ''; return; }
+    res.doc.save(res.filename);
+    statusEl.textContent = '';
+    toast('Timecard PDF downloaded','success');
+  }, 10);
+}
+
+function shareTimecard(){
+  var statusEl = document.getElementById('exp-status');
+  statusEl.textContent = 'Preparing PDF…';
+  setTimeout(function(){
+    var res = buildTimecardDoc();
+    if (!res){ statusEl.textContent = ''; return; }
+    var blob = res.doc.output('blob');
+    var canFileShare = !!(navigator.canShare && window.File);
+    if (canFileShare){
+      try {
+        var file = new File([blob], res.filename, {type:'application/pdf'});
+        if (navigator.canShare({files:[file]})){
+          statusEl.textContent = '';
+          navigator.share({
+            files:[file],
+            title:'TimeVault Timecard',
+            text:'Timecard for ' + res.label
+          }).then(function(){
+            toast('Timecard shared','success');
+          }).catch(function(err){
+            if (err && err.name === 'AbortError') return; // user cancelled — no error toast
+            res.doc.save(res.filename);
+            toast('Sharing failed — PDF downloaded instead','warning');
+          });
+          return;
+        }
+      } catch(e){ /* fall through to fallback below */ }
+    }
+    // Fallback: browsers without Web Share (files) support — e.g. desktop Firefox.
+    res.doc.save(res.filename);
+    statusEl.textContent = '';
+    toast('Your browser can\'t share files directly — PDF downloaded, attach it to your email or text','info');
+  }, 10);
+}
+
 /* ---------- clock ---------- */
 function tickClock(){
   var n = new Date();
@@ -1248,7 +1707,8 @@ document.getElementById('e-brk').addEventListener('input', updateEditHrs);
 document.getElementById('edit-modal').addEventListener('click', function(ev){ if (ev.target === this) closeEdit(); });
 document.getElementById('sett-modal').addEventListener('click', function(ev){ if (ev.target === this) closeSett(); });
 document.getElementById('monthly-modal').addEventListener('click', function(ev){ if (ev.target === this) closeMonthly(); });
-document.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ closeEdit(); closeSett(); closeMonthly(); } });
+document.getElementById('export-modal').addEventListener('click', function(ev){ if (ev.target === this) closeExport(); });
+document.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ closeEdit(); closeSett(); closeMonthly(); closeExport(); } });
 
 loadData();
 loadActiveSession();
