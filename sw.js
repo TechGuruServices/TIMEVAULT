@@ -3,7 +3,7 @@
  * Provides offline functionality and caching for the PWA
  */
 
-const CACHE_NAME = 'timevault-v2.1';
+const CACHE_NAME = 'timevault-v2.2';
 const OFFLINE_URL = 'index.html';
 
 // Local, same-origin assets only — safe for cache.addAll (a single failed

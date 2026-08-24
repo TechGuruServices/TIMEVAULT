@@ -1,4 +1,7 @@
 {
+  "id": "/",
+  "lang": "en",
+  "dir": "ltr",
   "name": "TimeVault - Premium Time Tracking & Payroll",
   "short_name": "TimeVault",
   "description": "AI-powered premium time tracking PWA with payroll calculations, local storage, and cross-device sync. Track hours, calculate earnings, and manage your time like a pro.",
