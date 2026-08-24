@@ -1713,6 +1713,17 @@ document.getElementById('monthly-modal').addEventListener('click', function(ev){
 document.getElementById('export-modal').addEventListener('click', function(ev){ if (ev.target === this) closeExport(); });
 document.addEventListener('keydown', function(e){ if (e.key === 'Escape'){ closeEdit(); closeSett(); closeMonthly(); closeExport(); } });
 
+/* Desktop browsers (Chrome/Edge/Safari) change a focused <input type="number">'s
+   value when the mouse wheel scrolls over it, instead of scrolling the page/modal
+   underneath. The Settings modal is dense with number fields packed close together,
+   so this made it feel like scrolling was broken there. Blurring the field on wheel
+   means scrolling always scrolls — number values only change via click/type/arrow
+   keys, never by accident mid-scroll. */
+document.addEventListener('wheel', function(e){
+  var el = document.activeElement;
+  if (el && el.tagName === 'INPUT' && el.type === 'number') el.blur();
+}, {passive:true});
+
 loadData();
 loadActiveSession();
 setSyncState((settings.jbKey && settings.jbId) ? 'linked' : 'offline');
