@@ -4,7 +4,7 @@
   "dir": "ltr",
   "name": "TimeVault - Premium Time Tracking & Payroll",
   "short_name": "TimeVault",
-  "description": "AI-powered premium time tracking PWA with payroll calculations, local storage, and cross-device sync. Track hours, calculate earnings, and manage your time like a pro.",
+  "description": "Premium time tracking PWA with payroll calculations, local storage, and optional cross-device sync. Track hours, calculate earnings, and manage your time like a pro.",
   "start_url": "index.html",
   "scope": "./",
   "display": "standalone",
@@ -146,18 +146,6 @@
       "short_name": "Dashboard",
       "description": "View your time tracking dashboard and earnings",
       "url": "index.html?mode=dashboard",
-      "icons": [
-        {
-          "src": "icons/time-icons_android_192x192.png",
-          "sizes": "192x192"
-        }
-      ]
-    },
-    {
-      "name": "AI Assistant",
-      "short_name": "AI",
-      "description": "Ask TimeVault AI about your hours and earnings",
-      "url": "index.html?mode=ai",
       "icons": [
         {
           "src": "icons/time-icons_android_192x192.png",
